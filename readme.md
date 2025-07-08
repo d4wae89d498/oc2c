@@ -17,11 +17,10 @@ Because Objective‑C was explicitly designed as a thin layer over C, a partial 
 - **Support** for officials Objective-C runtime library `libobjc`. A small `libobjc` is also provided and aims to be runtime compatible with officials implementations.
 - **C99‑Only Implementation**  
   No external libraries or language extensions—just a single ANSI‑compatible toolchain.
-- **Struct‑based Polymorphism**  
-  Every AST node carries a function pointer “accept” method; visitors (e.g. pretty‑printer or C‑code generator) implement polymorphic behavior via struct of callbacks.
-- **Backtracking / Recursive Descent Parser**  
+- **Simple Backtracking/Recursive Descent Parser**  
   The `try_parse` macro + `save/restore` parser state let you compose complex, backtracking grammar rules in a compact way—no separate lexer, no parser generator.
-- **Extensible via a 'Visitor alike' Pattern**  
+- **Extensible via a 'Visitor alike' Pattern** & **Struct‑based Polymorphism**  
+  Every AST node carries a function pointer “accept” method; visitors (e.g. pretty‑printer or C‑code generator) implement polymorphic behavior via struct of callbacks.
   Built‑in 'visitors':  
   - **Dumper** (`visitors/dumper.c`): prints the AST for debugging  
   - **Transpiler** (`visitors/transpiler.c`): emits C code for recognized Objective‑C nodes  
