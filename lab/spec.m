@@ -90,11 +90,11 @@ int main() {
     printf("Species: %s\n", [Dog species]); // class method
 
     // Dynamic typing
-    //id obj = fido;
-    //SEL selector = @selector(speak);
-    //if ([obj respondsToSelector:selector]) {
-    //    [obj performSelector:selector];
-    //}
+    id obj = fido;
+    SEL selector = @selector(speak);
+    if ([obj respondsToSelector:selector]) {
+        [obj performSelector:selector];
+    }
 
     [fido release];
     return 0;
