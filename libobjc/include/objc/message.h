@@ -18,6 +18,24 @@ extern "C" {
         ((void* (*)(void*, id, ...))(class_getInstanceMethodCheck(obj->isa, __VA_ARGS__)->imp))(ptr, obj, __VA_ARGS__)\
     )
 
+
+
+# define objc_msgSendSuper(obj, ...)\
+    (!obj || !((struct objc_super *)obj)->super_class ? NULL : \
+        class_getInstanceMethodCheck(((struct objc_super *)obj)->super_class, __VA_ARGS__)->imp((id)obj, __VA_ARGS__)\
+    )
+
+# define objc_msgSendSuper_fpret(obj, ...)\
+    (!obj || !((struct objc_super *)obj)->isa ? NULL :\
+        (double (*)(id, SEL, ...))(class_getInstanceMethodCheck(((struct objc_super *)obj)->isa, __VA_ARGS__)->imp)((id)obj, __VA_ARGS__)\
+    )
+# define objc_msgSendSuper_stret(ptr, obj, ...)\
+    (void)(!((struct objc_super *)obj) || !((struct objc_super *)obj)->isa ? NULL :\
+        ((void* (*)(void*, id, ...))(class_getInstanceMethodCheck(((struct objc_super *)obj)->isa, __VA_ARGS__)->imp))(ptr, (id)obj, __VA_ARGS__)\
+    )
+
+
+
 Method *class_getInstanceMethodCheck(Class isa, SEL sel, ...);
 # ifdef __cplusplus
 }

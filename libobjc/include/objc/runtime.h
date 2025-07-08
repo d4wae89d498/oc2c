@@ -41,10 +41,6 @@ void class_addMethod(Class cls, SEL sel, IMP imp, const char *types);
 Method *class_getInstanceMethod(Class cls, SEL sel);
 Method *class_getClassMethod(Class cls, SEL sel);
 
-void *objc_msgSend_fpret(id obj, SEL sel, ...);
-void *objc_msgSend_stret(void *stretAddr, id obj, SEL sel, ...);
-void *objc_msgSendSuper(void *superInfo, SEL sel, ...);
-
 const char *class_getName(Class cls);
 Class class_getSuperclass(Class cls);
 

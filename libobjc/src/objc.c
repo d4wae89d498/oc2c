@@ -10,8 +10,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-// Portable strdup implementation
-static char *objc_strdup(const char *s) {
+static char *_strdup(const char *s) {
     if (!s) return NULL;
     size_t len = strlen(s) + 1;
     char *copy = malloc(len);
@@ -29,14 +28,14 @@ static int class_count = 0;
 static struct objc_selector selector_table[MAX_SELECTORS];
 static int selector_count = 0;
 
-// --- Selector registration ---
+
 SEL sel_registerName(const char *name) {
     for (int i = 0; i < selector_count; ++i) {
         if (strcmp(selector_table[i].name, name) == 0)
             return &selector_table[i];
     }
     if (selector_count < MAX_SELECTORS) {
-        selector_table[selector_count].name = objc_strdup(name);
+        selector_table[selector_count].name = _strdup(name);
         return &selector_table[selector_count++];
     }
     return NULL;
@@ -61,7 +60,7 @@ const char *sel_getName(SEL sel) {
 // --- Class registration ---
 Class objc_allocateClassPair(const char *name, Class super_class, size_t extra_bytes) {
     Class cls = (Class)calloc(1, sizeof(struct objc_class) + extra_bytes);
-    cls->name = objc_strdup(name);
+    cls->name = _strdup(name);
     cls->super_class = super_class;
     cls->meta_class = NULL;
     cls->method_list = calloc(MAX_METHODS, sizeof(Method));
@@ -122,24 +121,6 @@ struct objc_super {
     id receiver;
     Class super_class;
 };
-
-void *objc_msgSendSuper(void *superInfo, SEL sel, ...) {
-    struct objc_super *sup = (struct objc_super *)superInfo;
-    if (!sup || !sup->receiver || !sup->super_class) {
-        fprintf(stderr, "objc_msgSendSuper: invalid superInfo\n");
-        abort();
-    }
-    Method *m = class_getInstanceMethod(sup->super_class, sel);
-    if (!m) {
-        fprintf(stderr, "Unrecognized selector '%s' in objc_msgSendSuper\n", sel_getName(sel));
-        abort();
-    }
-    va_list ap;
-    va_start(ap, sel);
-    void *ret = m->imp(sup->receiver, sel, ap);
-    va_end(ap);
-    return ret;
-}
 
 const char *class_getName(Class cls) {
     return cls ? cls->name : NULL;
