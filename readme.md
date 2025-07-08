@@ -6,7 +6,7 @@ A **partial Objective‑C 1.0 → C99 transpiler** written in plain C99, designe
 
 ## Project Overview
 
-`oc2c` takes a subset of early Objective‑C 1.0 syntax (interfaces, implementations, message passings, encode, selector) and “desugars” it directly into equivalent C code and emit `libobjc` calls. Only C expressions are parsed to avoid ambiguities between nested C/OBJC expressions; a fully TranslationUnit paarsing is not needed hence reducing parser size.
+`oc2c` takes a subset of early Objective‑C 1.0 syntax (interfaces, implementations, message passings, encode, selector) and “desugars” it directly into equivalent C code and emit `libobjc` calls. Only C expressions are parsed to avoid ambiguities between nested C/OBJC expressions; a fully TranslationUnit parsing is not needed hence reducing parser size.
 
 ---
 
