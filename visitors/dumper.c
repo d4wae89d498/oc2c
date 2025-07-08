@@ -16,12 +16,7 @@ void *param_dump(param *self, void *ctx) {
 }
 
 void *method_dump(method *self, void *ctx) {
-    unsigned long long indent = (unsigned long long)ctx;
-    print_indent(indent); printf("method: selector=%s return_type=%s\n", self->selector ? self->selector : "(null)", self->return_type ? self->return_type : "(null)");
-    for (int i = 0; i < self->param_count; ++i) {
-        if (self->params && self->params[i] && self->params[i] && self->params[i]->base.accept)
-            self->params[i]->base.accept((ast*)self->params[i], dumper_visitor, ctx);
-    }
+    
     return NULL;
 }
 
@@ -93,7 +88,6 @@ ast_visitor dumper_visitor = {
     .interface = interface_dump,
     .implementation = implementation_dump,
     .message = message_dump,
-    .selector = selector_dump,
     .raw = raw_dump,
     .tu = tu_dump,
     .expr = expr_dump

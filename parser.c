@@ -206,13 +206,16 @@ method *parse_method(parser_ctx *ctx) {
         char *param_name = try_parse(0, ctx, parse_identifier);
         if (!param_name) return NULL;
 
+/*
         make_ast(param, param, {
+            
             .type = param_type,
-            .name = param_name
+            .name = param_name 
         });
+        */
 
         params = realloc(params, sizeof(*params) * (param_count + 1));
-        params[param_count++] = param;
+        //params[param_count++] = param;
 
         skip_ws(ctx);
     }
@@ -220,12 +223,13 @@ method *parse_method(parser_ctx *ctx) {
     if (!try_parse(0, ctx, parse_str,, ";")) return NULL;
 
     make_ast(method, node, {
+        /*
         .is_class_method = is_class_method,
         .return_type = return_type,
         .selector = selector,
         .params = params,
         .param_count = param_count,
-        .body = NULL
+        .body = NULL*/
     });
     return node;
 }
