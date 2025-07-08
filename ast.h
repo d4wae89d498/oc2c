@@ -3,116 +3,164 @@
 
 #include <stdlib.h>
 
-// Forward declaration for ast_node_visitor
-struct ast_node_visitor;
-typedef struct ast_node_visitor ast_node_visitor;
+#define make_ast(type, var, ...) \
+    type *var = malloc(sizeof(type)); \
+    *var = (type)__VA_ARGS__; \
+    var->base.accept = type ## _accept; \
 
-typedef struct ast_node ast_node;
-typedef struct ivar_node ivar_node;
-typedef struct param_node param_node;
-typedef struct method_node method_node;
-typedef struct interface_node interface_node;
-typedef struct implementation_node implementation_node;
-typedef struct message_node message_node;
-typedef struct selector_node selector_node;
-typedef struct raw_node raw_node;
-typedef struct tu_node tu_node;
-typedef struct expr_node expr_node;
+// Forward declaration for ast_visitor
+struct ast_visitor;
+typedef struct ast_visitor ast_visitor;
 
-typedef struct ast_node_visitor 
+typedef struct ast ast;
+typedef struct ivar ivar;
+typedef struct param param;
+typedef struct method method;
+typedef struct interface interface;
+typedef struct implementation implementation;
+typedef struct message message;
+typedef struct raw raw;
+typedef struct tu tu;
+typedef struct expr expr;
+
+typedef struct ast_visitor 
 {
-    void *(*param_node)(param_node *self, void*);
-    void *(*method_node)(method_node *self, void*);
-    void *(*interface_node)(interface_node *self, void*);
-    void *(*implementation_node)(implementation_node *self, void*);
-    void *(*message_node)(message_node *self, void*);
-    void *(*selector_node)(selector_node *self, void*);
-    void *(*raw_node)(raw_node *self, void*);
-    void *(*tu_node)(tu_node *self, void*);
-    void *(*expr_node)(expr_node *self, void*);
-} ast_node_visitor;
+    void *(*param)(param *self, void*);
+    void *(*method)(method *self, void*);
+    void *(*interface)(interface *self, void*);
+    void *(*implementation)(implementation *self, void*);
+    void *(*message)(message *self, void*);
+    void *(*raw)(raw *self, void*);
+    void *(*tu)(tu *self, void*);
+    void *(*expr)(expr *self, void*);
+} ast_visitor;
 
-struct ast_node {
-    void *(*accept)(ast_node *, ast_node_visitor, void*);
+struct ast {
+    void *(*accept)(ast *, ast_visitor, void*);
 };
 
 
-struct param_node {
-    ast_node base;
+struct param {
+    ast base;
     char *type;
-    char *name;
+    char *name; 
 };
 
-struct method_node {
-    ast_node base;
-    int is_class_method; 
-    char *return_type;
-    char *selector;
-    struct param_node **params;
-    int param_count;
-    char *body;
+struct keyword_arg {
+    char *keyword;
+    struct param *param;
 };
 
-struct interface_node {
-    ast_node base;
+struct method {
+    ast base;
+    enum {static_method, member_method} method_type;
+    char *return_type;    
+    struct keyword_arg **keyword_args;
+    size_t keyword_arg_count;
+    ast *body;
+};
+
+
+struct interface {
+    ast base;
     char *name;
     char *superclass_name;
     char **ivars;
     int ivar_count;
-    struct method_node **methods;
+    struct method **methods;
     int method_count;
 };
 
-struct implementation_node {
-    ast_node base;
+struct implementation {
+    ast base;
     char *name;
     char *superclass_name;
-    struct method_node **methods;
+    struct method **methods;
     int method_count;
 };
 
-struct message_node {
-    ast_node base;
-    ast_node *receiver;
+struct message {
+    ast base;
+    ast *receiver;
     char *selector;
-    ast_node **args;
+    ast **args;
     int arg_count;
 };
 
-struct selector_node {
-    ast_node    base;
-    char        *name;
-};
 
-struct tu_node {
-    ast_node base;
-
-    ast_node    **childs;
-    size_t      size;
-};
-
-struct raw_node
-{
-    ast_node base;
-
+struct raw {
+    ast base;
     char *source;
 };
 
-struct expr_node {
-    ast_node base;
-    ast_node **children;
+struct expr {
+    ast base;
+    ast **children;
     int child_count;
 };
 
+struct binop_expr {
+    ast base;
+    ast *left;
+    char *op;
+    ast *right;
+};
+
+struct conditional_expr {
+    ast base;
+    ast *test;
+    ast *consequent;
+    ast *alternate;
+};
+
+struct unary_op_expr {
+    ast base;
+    char *op;
+    ast *expr;
+    enum {
+        unary_op_expr_prefix,
+        unary_op_expr_sufix
+    } pos;
+};
+
+struct cast_expr {
+    ast base;
+    char *type;
+    ast *expr;
+};
+
+struct call_expr {
+    ast base;
+    ast *callee;
+    ast **args;
+    size_t args_count;
+};
+
+struct member_access {
+    ast base;
+    ast *callee;
+    char *id;
+    enum {
+        member_access_arrow,
+        member_access_dot
+    } pos;
+};
+
+struct tu {
+    ast base;
+
+    ast    **childs;
+    size_t      size;
+};
+
 // _accept function prototypes
-void *param_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *method_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *interface_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *implementation_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *message_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *selector_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *raw_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *tu_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
-void *expr_node_accept(ast_node *self, ast_node_visitor visitor, void* arg);
+void *param_accept(ast *self, ast_visitor visitor, void* arg);
+void *method_accept(ast *self, ast_visitor visitor, void* arg);
+void *interface_accept(ast *self, ast_visitor visitor, void* arg);
+void *implementation_accept(ast *self, ast_visitor visitor, void* arg);
+void *message_accept(ast *self, ast_visitor visitor, void* arg);
+void *raw_accept(ast *self, ast_visitor visitor, void* arg);
+void *tu_accept(ast *self, ast_visitor visitor, void* arg);
+void *expr_accept(ast *self, ast_visitor visitor, void* arg);
 
 #endif // AST_H

@@ -1,4 +1,4 @@
-#include "parser.h"
+#include "./parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "visitors/dumper.h"
@@ -6,9 +6,8 @@
 #include <string.h>
 
 // Forward declarations for AST dump visitor
-struct ast_node;
-extern void ast_dump(struct ast_node *node, int indent);
-extern struct ast_node_visitor dumper_visitor;
+struct ast;
+extern struct ast_visitor dumper_visitor;
 
 void print_help(const char *prog) {
     printf("Usage: %s [--visitor dumper|transpiler] <file.m>\n", prog);
@@ -55,11 +54,11 @@ static char *read_file(const char *filename) {
     return buf;
 }
 
-static void run_visitor(const char *visitor, tu_node *root) {
+static void run_visitor(const char *visitor, tu *root) {
     if (strcmp(visitor, "dumper") == 0) {
-       dumper_visitor.tu_node(root, 0);
+       dumper_visitor.tu(root, 0);
     } else if (strcmp(visitor, "transpiler") == 0) {
-       transpiler.tu_node(root, NULL);
+       transpiler.tu(root, NULL);
     } else {
         fprintf(stderr, "Unknown visitor: %s\n", visitor);
         exit(1);
@@ -75,7 +74,7 @@ int main(int ac, char **av) {
         return 1;
     }
     struct parser_ctx ctx = { .input = input, .pos = 0, .length = strlen(input) };
-    tu_node *root = parse_tu(&ctx);
+    tu *root = parse_tu(&ctx);
     if (!root) {
         fprintf(stderr, "Failed to parse input.\n");
         free(input);

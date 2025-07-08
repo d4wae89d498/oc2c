@@ -3,6 +3,6 @@
 
 #include "../ast.h"
 
-extern ast_node_visitor dumper_visitor;
+extern ast_visitor dumper_visitor;
 
 #endif // VISITORS_DUMPER_H 

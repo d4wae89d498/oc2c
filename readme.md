@@ -6,7 +6,7 @@ A **partial Objective‑C 1.0 → C99 transpiler** written in plain C99, designe
 
 ## Project Overview
 
-`oc2c` takes a subset of Objective‑C syntax (interfaces, implementations, method calls, etc.) and “desugars” it directly into equivalent C code. All other C constructs are treated as opaque “raw” nodes and passed through unchanged—no full C grammar parsing is attempted. This lightweight, **partial transpiler** approach keeps the binary small and the bootstrap process straightforward.
+`oc2c` takes a subset of Objective‑C syntax (interfaces, implementations, method calls, etc.) and “desugars” it directly into equivalent C code and can emit `libobjc` calls using a flag. All other C constructs are treated as opaque “raw” nodes and passed through unchanged—no full C grammar parsing is attempted. This lightweight, **partial transpiler** approach keeps the binary small and the bootstrap process straightforward.
 
 ---
 
@@ -55,7 +55,7 @@ Because Objective‑C was explicitly designed as a thin layer over C, a partial 
   Two built‑in visitors:  
   - **Dumper** (`visitors/dumper.c`): prints the AST for debugging  
   - **Transpiler** (`visitors/transpiler.c`): emits C code for recognized Objective‑C nodes  
-- **Optional** supprot for Objective-C runtime library `libobjc` and interoperability.
+- **Optional** support for Objective-C runtime library `libobjc` and interoperability.
 
 ---
 
@@ -114,13 +114,7 @@ void Foo_hello(Foo *self) { printf("Hello, world!\n"); }
 /* … */
 ```
 
----
 
-## Why “Partial Compiler”?
-
-* **No full C parsing**: only Objective‑C extensions are recognized, everything else is a “raw” pass‑through.
-* **Simplicity over completeness**: fast to build on new platforms, easier to inspect and modify.
-* **Focused scope**: ideal for experiments, teaching, or bootstrapping a new toolchain.
 
 ---
 

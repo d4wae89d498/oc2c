@@ -1,43 +1,11 @@
 #import <stdio.h>
 #import <stdlib.h>
 
-// Base class
-@interface Object {
-    int _retainCount;
-}
-- (id)init :(NSString *)aString; 
-- (id)retain;
-- (void)release;
-- (void)dealloc;
-@end
+#import <Foundation/Foundation.h> // required for NSObject
 
-@implementation Object
-
-- (id)init {
-    _retainCount = 1;
-    return self;
-}
-
-- (id)retain {
-    _retainCount++;
-    return self;
-}
-
-- (void)release {
-    _retainCount--;
-    if (_retainCount == 0) {
-        [self dealloc];
-    }
-}
-
-- (void)dealloc {
-    free(self);
-}
-
-@end
 
 // Animal class with ivar and methods
-@interface Animal : Object {
+@interface Animal : NSObject {
     const char *_name;
 }
 - (void)setName:(const char *)name;
@@ -122,11 +90,11 @@ int main() {
     printf("Species: %s\n", [Dog species]); // class method
 
     // Dynamic typing
-    id obj = fido;
-    SEL selector = @selector(speak);
-    if ([obj respondsToSelector:selector]) {
-        [obj performSelector:selector];
-    }
+    //id obj = fido;
+    //SEL selector = @selector(speak);
+    //if ([obj respondsToSelector:selector]) {
+    //    [obj performSelector:selector];
+    //}
 
     [fido release];
     return 0;

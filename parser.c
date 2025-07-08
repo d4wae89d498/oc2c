@@ -1,5 +1,4 @@
 #include "ast.h"
-#include "oop.h"
 #include "parser.h"
 
 #include <stdlib.h>
@@ -156,20 +155,20 @@ char *parse_ivar(parser_ctx *ctx) {
 }
 
 
-param_node *parse_param(parser_ctx *ctx) {
+param *parse_param(parser_ctx *ctx) {
     char *type = NULL, *name = NULL;
 
     if (!try_parse(&type, ctx, parse_identifier,) || !try_parse(&name, ctx, parse_identifier,))
         return NULL;
 
-    construct(param_node, node, {
+    make_ast(param, node, {
         .type = type,
         .name = name
     });
     return node;
 }
 
-method_node *parse_method(parser_ctx *ctx) {
+method *parse_method(parser_ctx *ctx) {
     int is_class_method = 0;
     if (try_parse(0, ctx, parse_str, ,"+" )) {
         is_class_method = 1;
@@ -190,7 +189,7 @@ method_node *parse_method(parser_ctx *ctx) {
     char *selector = try_parse(0, ctx, parse_identifier);
     if (!selector) return NULL;
 
-    struct param_node **params = NULL;
+    struct param **params = NULL;
     int param_count = 0;
 
     skip_ws(ctx);
@@ -207,7 +206,7 @@ method_node *parse_method(parser_ctx *ctx) {
         char *param_name = try_parse(0, ctx, parse_identifier);
         if (!param_name) return NULL;
 
-        construct(param_node, param, {
+        make_ast(param, param, {
             .type = param_type,
             .name = param_name
         });
@@ -220,7 +219,7 @@ method_node *parse_method(parser_ctx *ctx) {
 
     if (!try_parse(0, ctx, parse_str,, ";")) return NULL;
 
-    construct(method_node, node, {
+    make_ast(method, node, {
         .is_class_method = is_class_method,
         .return_type = return_type,
         .selector = selector,
@@ -232,11 +231,11 @@ method_node *parse_method(parser_ctx *ctx) {
 }
 
 
-implementation_node *parse_implementation(parser_ctx *ctx) {
+implementation *parse_implementation(parser_ctx *ctx) {
     char *name = try_parse(0, ctx, parse_identifier,);
     if (!name)
         return NULL;
-    construct(implementation_node, node, {
+    make_ast(implementation, node, {
         .name = name,
         .superclass_name = NULL,
         .methods = NULL,
@@ -246,8 +245,8 @@ implementation_node *parse_implementation(parser_ctx *ctx) {
     return node;
 }
 
-message_node *parse_message(parser_ctx *ctx) {
-    construct(message_node, node, {
+message *parse_message(parser_ctx *ctx) {
+    make_ast(message, node, {
         .selector = NULL,
         .args = NULL,
         .arg_count = 0
@@ -255,30 +254,30 @@ message_node *parse_message(parser_ctx *ctx) {
     return node;
 }
 
-selector_node *parse_selector(parser_ctx *ctx) {
-    construct(selector_node, node, {
+selector *parse_selector(parser_ctx *ctx) {
+    make_ast(selector, node, {
         .name = NULL
     });
     return node;
 }
 
-expr_node *parse_expr(parser_ctx *ctx) {
-    construct(expr_node, node, {
+expr *parse_expr(parser_ctx *ctx) {
+    make_ast(expr, node, {
         .children = NULL,
         .child_count = 0
     });
     return node;
 }
 
-tu_node *parse_tu(parser_ctx *ctx) {
-    construct(tu_node, node, {
-        .childs = malloc(sizeof(ast_node *)),
+tu *parse_tu(parser_ctx *ctx) {
+    make_ast(tu, node, {
+        .childs = malloc(sizeof(ast *)),
         .size = 0
     });
 
     while (!ctx_eof(ctx)) {
 
-        ast_node *child = NULL;
+        ast *child = NULL;
 
         /* === Inline parse_raw logic === */
         size_t raw_start = ctx->pos;
@@ -368,14 +367,14 @@ tu_node *parse_tu(parser_ctx *ctx) {
         }
 
         printf("%.15s\n", ctx->input + ctx->pos);
-        /* If we collected raw text before ObjC marker, emit raw_node */
+        /* If we collected raw text before ObjC marker, emit raw */
         if (ctx->pos > raw_start) {
             buf[buf_len] = '\0';
-            construct(raw_node, raw, { .source=buf });
-            child = (ast_node*)raw;
+            make_ast(raw, raw, { .source=buf });
+            child = (ast*)raw;
             
         }
-        /* Otherwise try ObjC constructs directly */
+        /* Otherwise try ObjC make_asts directly */
         else if (   try_parse(&child, ctx, parse_interface,)
                  || try_parse(&child, ctx, parse_implementation,))
         {
@@ -390,7 +389,7 @@ tu_node *parse_tu(parser_ctx *ctx) {
 
 
         if (node->size)
-            node->childs = realloc(node->childs, sizeof(ast_node *) * (node->size+1));
+            node->childs = realloc(node->childs, sizeof(ast *) * (node->size+1));
 
         node->childs[node->size++] = child;
     }
@@ -400,7 +399,7 @@ tu_node *parse_tu(parser_ctx *ctx) {
 }
 
 
-interface_node *parse_interface(parser_ctx *ctx) {
+interface *parse_interface(parser_ctx *ctx) {
     if (!try_parse(0, ctx, parse_str,, "@interface"))
         return NULL;
 
@@ -439,17 +438,17 @@ interface_node *parse_interface(parser_ctx *ctx) {
 
     printf("testin methods-----\n");
     // Methods: accumulate until @end
-    struct method_node **methods = NULL;
+    struct method **methods = NULL;
     int method_count = 0;
     while (!try_parse(0, ctx, parse_str,, "@end")) {
-        struct method_node *method = try_parse(0, ctx, parse_method, );
+        struct method *method = try_parse(0, ctx, parse_method, );
         if (!method) return NULL;
         methods = realloc(methods, sizeof(*methods) * (method_count + 1));
         methods[method_count++] = method;
         skip_ws(ctx);
     }
 
-    construct(interface_node, node, {
+    make_ast(interface, node, {
         .name = identifier,
         .superclass_name = superclass_name,
         .ivars = ivars,
@@ -460,3 +459,7 @@ interface_node *parse_interface(parser_ctx *ctx) {
     return node;
 }
 
+parse_expr()
+{
+    [];
+}

@@ -2,50 +2,50 @@
 #include "transpiler.h"
 
 
-ast_node_visitor transpiler = {
-    .param_node = &param_node_transpile,
-    .method_node = &method_node_transpile,
-    .interface_node = &interface_node_transpile,
-    .implementation_node = &implementation_node_transpile,
-    .message_node = &message_node_transpile,
-    .selector_node = &selector_node_transpile,
-    .raw_node = &raw_node_transpile,
-    .tu_node = &tu_node_transpile,
-    .expr_node = &expr_node_transpile
+ast_visitor transpiler = {
+    .param = &param_transpile,
+    .method = &method_transpile,
+    .interface = &interface_transpile,
+    .implementation = &implementation_transpile,
+    .message = &message_transpile,
+    .selector = &selector_transpile,
+    .raw = &raw_transpile,
+    .tu = &tu_transpile,
+    .expr = &expr_transpile
 };
 
-void *param_node_transpile(param_node *self, void *ctx) {
+void *param_transpile(param *self, void *ctx) {
     return NULL;
 }
 
-void *method_node_transpile(method_node *self, void *ctx) {
+void *method_transpile(method *self, void *ctx) {
     return NULL;
 }
 
-void *interface_node_transpile(interface_node *self, void *ctx) {
+void *interface_transpile(interface *self, void *ctx) {
     return NULL;
 }
 
-void *implementation_node_transpile(implementation_node *self, void *ctx) {
+void *implementation_transpile(implementation *self, void *ctx) {
     return NULL;
 }
 
-void *message_node_transpile(message_node *self, void *ctx) {
+void *message_transpile(message *self, void *ctx) {
     return NULL;
 }
 
-void *selector_node_transpile(selector_node *self, void *ctx) {
+void *selector_transpile(selector *self, void *ctx) {
     return NULL;
 }
 
-void *raw_node_transpile(raw_node *self, void *ctx) {
+void *raw_transpile(raw *self, void *ctx) {
     return NULL;
 }
 
-void *tu_node_transpile(tu_node *self, void *ctx) {
+void *tu_transpile(tu *self, void *ctx) {
     return NULL;
 }
 
-void *expr_node_transpile(expr_node *self, void *ctx) {
+void *expr_transpile(expr *self, void *ctx) {
     return NULL;
 }
