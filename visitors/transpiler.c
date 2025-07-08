@@ -8,7 +8,6 @@ ast_visitor transpiler = {
     .interface = &interface_transpile,
     .implementation = &implementation_transpile,
     .message = &message_transpile,
-    .selector = &selector_transpile,
     .raw = &raw_transpile,
     .tu = &tu_transpile,
     .expr = &expr_transpile
@@ -31,10 +30,6 @@ void *implementation_transpile(implementation *self, void *ctx) {
 }
 
 void *message_transpile(message *self, void *ctx) {
-    return NULL;
-}
-
-void *selector_transpile(selector *self, void *ctx) {
     return NULL;
 }
 

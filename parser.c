@@ -254,13 +254,6 @@ message *parse_message(parser_ctx *ctx) {
     return node;
 }
 
-selector *parse_selector(parser_ctx *ctx) {
-    make_ast(selector, node, {
-        .name = NULL
-    });
-    return node;
-}
-
 expr *parse_expr(parser_ctx *ctx) {
     make_ast(expr, node, {
         .children = NULL,
@@ -370,8 +363,8 @@ tu *parse_tu(parser_ctx *ctx) {
         /* If we collected raw text before ObjC marker, emit raw */
         if (ctx->pos > raw_start) {
             buf[buf_len] = '\0';
-            make_ast(raw, raw, { .source=buf });
-            child = (ast*)raw;
+            make_ast(raw, node, { .source=buf });
+            child = (ast*)node;
             
         }
         /* Otherwise try ObjC make_asts directly */
@@ -457,9 +450,4 @@ interface *parse_interface(parser_ctx *ctx) {
         .method_count = method_count
     });
     return node;
-}
-
-parse_expr()
-{
-    [];
 }

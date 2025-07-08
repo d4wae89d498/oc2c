@@ -149,8 +149,8 @@ struct member_access {
 struct tu {
     ast base;
 
-    ast    **childs;
-    size_t      size;
+    ast **childs;
+    size_t size;
 };
 
 // _accept function prototypes

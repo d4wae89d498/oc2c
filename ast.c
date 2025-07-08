@@ -23,10 +23,6 @@ void *message_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.message((message*)self, arg);
 }
 
-void *selector_accept(ast *self, ast_visitor visitor, void* arg) {
-    return visitor.selector((selector*)self, arg);
-}
-
 void *raw_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.raw((raw*)self, arg);
 }

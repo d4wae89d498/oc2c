@@ -1,6 +1,10 @@
 *.o
 *.so
 *.a
+*.out
+*.d
 .swp
 .DS_Store
 .Identifier
+compile_commands.json
+.cache

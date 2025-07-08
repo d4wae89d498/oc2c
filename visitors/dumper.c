@@ -58,11 +58,6 @@ void *message_dump(message *self, void *ctx) {
     return NULL;
 }
 
-void *selector_dump(selector *self, void *ctx) {
-    unsigned long long indent = (unsigned long long)ctx;
-    print_indent(indent); printf("selector: name=%s\n", self->name ? self->name : "(null)");
-    return NULL;
-}
 
 void *raw_dump(raw *self, void *ctx) {
     unsigned long long indent = (unsigned long long)ctx;
