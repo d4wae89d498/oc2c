@@ -3,20 +3,13 @@
 #include "objc/runtime.h"
 
 #include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
 
 #include <stddef.h>
 #include <stdarg.h>
 
-static char *_strdup(const char *s) {
-    if (!s) return NULL;
-    size_t len = strlen(s) + 1;
-    char *copy = malloc(len);
-    if (copy) memcpy(copy, s, len);
-    return copy;
-}
+#include "./../../_strdup.h"
 
 #define MAX_CLASSES 128
 #define MAX_SELECTORS 256
@@ -146,11 +139,12 @@ void objc_dealloc(id obj) {
 }
 
 static struct objc_class _Object_class = {
-    .name = "Object",
+    .name = "NSObject",
     .super_class = NULL,
     .meta_class = NULL,
     .method_list = NULL,
     .method_count = 0,
     .instance_size = sizeof(struct objc_object)
 };
+
 Class Object_class = &_Object_class; 

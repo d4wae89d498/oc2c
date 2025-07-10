@@ -18,6 +18,11 @@
 
 @implementation Animal
 
+- (void)someMethodWithA:(int)a b:(int)b  {
+    NSLog(@"%d %d", a, b);
+}
+
+
 - (void)setName:(const char *)name {
     _name = name;
 }

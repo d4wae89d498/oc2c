@@ -3,8 +3,8 @@
 #include <stdlib.h>
 
 
-void *param_accept(ast *self, ast_visitor visitor, void* arg) {
-    return visitor.param((param*)self, arg);
+void *message_param_accept(ast *self, ast_visitor visitor, void* arg) {
+    return visitor.message_param((message_param*)self, arg);
 }
 
 void *method_accept(ast *self, ast_visitor visitor, void* arg) {
@@ -27,10 +27,14 @@ void *raw_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.raw((raw*)self, arg);
 }
 
-void *tu_accept(ast *self, ast_visitor visitor, void* arg) {
-    return visitor.tu((tu*)self, arg);
+void *top_level_accept(ast *self, ast_visitor visitor, void* arg) {
+    return visitor.tu((top_level*)self, arg);
 }
 
 void *expr_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.expr((expr*)self, arg);
+}
+
+void *statement_accept(ast *self, ast_visitor visitor, void *arg) {
+    return visitor.statement((statement*) self, arg);
 }

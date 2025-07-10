@@ -14,25 +14,37 @@ typedef struct ast_visitor ast_visitor;
 
 typedef struct ast ast;
 typedef struct ivar ivar;
-typedef struct param param;
 typedef struct method method;
 typedef struct interface interface;
 typedef struct implementation implementation;
 typedef struct message message;
 typedef struct raw raw;
-typedef struct tu tu;
+typedef struct top_level top_level;
 typedef struct expr expr;
+typedef struct binop_expr binop_expr;
+typedef struct conditional_expr conditional_expr;
+typedef struct unary_op_expr unary_op_expr;
+typedef struct cast_expr cast_expr;
+typedef struct call_expr call_expr;
+typedef struct member_access member_access;
+typedef struct keyword_arg keyword_arg;
+typedef struct compound_statement compound_statement;
+typedef struct statement statement;
+typedef struct message_param message_param;
+
 
 typedef struct ast_visitor 
 {
-    void *(*param)(param *self, void*);
+    void *(*parse_compound_statement)(compound_statement *self, void*);
     void *(*method)(method *self, void*);
     void *(*interface)(interface *self, void*);
     void *(*implementation)(implementation *self, void*);
     void *(*message)(message *self, void*);
     void *(*raw)(raw *self, void*);
-    void *(*tu)(tu *self, void*);
+    void *(*tu)(top_level *self, void*);
     void *(*expr)(expr *self, void*);
+    void *(*statement)(statement *self, void*);
+    void *(*message_param)(message_param *self, void*);
 } ast_visitor;
 
 struct ast {
@@ -40,22 +52,27 @@ struct ast {
 };
 
 
-struct param {
+///////////////////////////////////
+
+struct message_param {
     ast base;
-    char *type;
-    char *name; 
+
+    char *keyword;
+    expr *value;
 };
 
 struct keyword_arg {
+    ast base;
     char *keyword;
-    struct param *param;
+    char *type;
+    char *name; 
 };
 
 struct method {
     ast base;
     enum {static_method, member_method} method_type;
     char *return_type;    
-    struct keyword_arg **keyword_args;
+    keyword_arg **keyword_args;
     size_t keyword_arg_count;
     ast *body;
 };
@@ -65,8 +82,7 @@ struct interface {
     ast base;
     char *name;
     char *superclass_name;
-    char **ivars;
-    int ivar_count;
+    compound_statement *ivars;
     struct method **methods;
     int method_count;
 };
@@ -79,19 +95,15 @@ struct implementation {
     int method_count;
 };
 
+///////////////////////////////////
+
 struct message {
     ast base;
-    ast *receiver;
-    char *selector;
-    ast **args;
-    int arg_count;
+    expr *receiver;
+    message_param **params;
+    int params_count;
 };
 
-
-struct raw {
-    ast base;
-    char *source;
-};
 
 struct expr {
     ast base;
@@ -146,21 +158,55 @@ struct member_access {
     } pos;
 };
 
-struct tu {
+
+struct raw {
+    ast base;
+    char *source;
+};
+
+struct statement {
+    ast base;
+    enum {
+        is_raw, 
+        is_expr
+    } statement_type;
+    union {
+        raw *r_val;
+        expr *e_val;
+    };
+};
+
+struct top_level {
     ast base;
 
     ast **childs;
     size_t size;
 };
 
+struct compound_statement {
+    ast base;
+
+    statement **statements;
+    size_t statements_count;
+};
 // _accept function prototypes
-void *param_accept(ast *self, ast_visitor visitor, void* arg);
+void *statement_accept(ast *self, ast_visitor visitor, void *arg);
+void *compound_statement_accept(ast *self, ast_visitor visitor, void* arg);
 void *method_accept(ast *self, ast_visitor visitor, void* arg);
 void *interface_accept(ast *self, ast_visitor visitor, void* arg);
 void *implementation_accept(ast *self, ast_visitor visitor, void* arg);
 void *message_accept(ast *self, ast_visitor visitor, void* arg);
 void *raw_accept(ast *self, ast_visitor visitor, void* arg);
-void *tu_accept(ast *self, ast_visitor visitor, void* arg);
+void *top_level_accept(ast *self, ast_visitor visitor, void* arg);
 void *expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *binop_expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *conditional_expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *unary_op_expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *cast_expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *call_expr_accept(ast *self, ast_visitor visitor, void* arg);
+void *member_access_accept(ast *self, ast_visitor visitor, void* arg);
+void *keyword_arg_accept(ast *self, ast_visitor visitor, void* arg);
+void *message_param_accept(ast *self, ast_visitor visitor, void* arg);
+
 
 #endif // AST_H

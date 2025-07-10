@@ -1,12 +1,18 @@
 #include "ast.h"
 #include "parser.h"
 
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <ctype.h>
 
-// --- Parser context and state for string parsing ---
+#include "./_strdup.h"
+
+//////////////////////////////////////////////////////////
+//////////////  CONTEXT                        ///////////
+//////////////////////////////////////////////////////////
 
 struct parser_ctx_state {
     size_t pos;
@@ -25,18 +31,23 @@ static void restore_ctx_state(parser_ctx *ctx, parser_ctx_state state) {
     ctx->depth = state.depth - 1;
 }
 
-// --- String parsing helpers ---
+//////////////////////////////////////////////////////////
+//////////////  HELPERS                        ///////////
+//////////////////////////////////////////////////////////
 
-// Skip whitespace
-static void skip_ws(parser_ctx *ctx) {
-    while (ctx->input[ctx->pos] == ' ' || ctx->input[ctx->pos] == '\t' || ctx->input[ctx->pos] == '\n' || ctx->input[ctx->pos] == '\r') {
+static void skip_whitespace(parser_ctx *ctx) {
+    while (isspace(ctx->input[ctx->pos])) 
         ctx->pos++;
-    }
 }
 
-// Advances if 'what' is in input, returning a malloc'd copy if matched, or NULL otherwise
-char *parse_str(parser_ctx *ctx, char *what) {
-    skip_ws(ctx);
+static void parse_skip_whitespace(parser_ctx *ctx) {
+    return skip_whitespace(ctx);
+}
+
+//////
+
+static char *exact_str(parser_ctx *ctx, char *what) {
+    skip_whitespace(ctx);
     if (what) {
         size_t len = strlen(what);
         if (strncmp(ctx->input + ctx->pos, what, len) == 0) {
@@ -48,34 +59,20 @@ char *parse_str(parser_ctx *ctx, char *what) {
     return NULL;
 }
 
-// Parse a C identifier (returns malloc'd string or NULL)
-char *parse_identifier(parser_ctx *ctx) {
-    skip_ws(ctx);
-    size_t start = ctx->pos;
-    if ((ctx->input[ctx->pos] >= 'a' && ctx->input[ctx->pos] <= 'z') ||
-        (ctx->input[ctx->pos] >= 'A' && ctx->input[ctx->pos] <= 'Z') ||
-        ctx->input[ctx->pos] == '_') {
-        ctx->pos++;
-        while ((ctx->input[ctx->pos] >= 'a' && ctx->input[ctx->pos] <= 'z') ||
-               (ctx->input[ctx->pos] >= 'A' && ctx->input[ctx->pos] <= 'Z') ||
-               (ctx->input[ctx->pos] >= '0' && ctx->input[ctx->pos] <= '9') ||
-               ctx->input[ctx->pos] == '_') {
-            ctx->pos++;
-        }
-        size_t len = ctx->pos - start;
-        char *out = malloc(len + 1);
-        memcpy(out, ctx->input + start, len);
-        out[len] = '\0';
-        return out;
-    }
-    return NULL;
+static char *parse_exact_str(parser_ctx *ctx, char *what) {
+    return exact_str(ctx, what);
 }
+
+//////////////////////////////////////////////////////////
+//////////////  BACKTRACKING                   ///////////
+//////////////////////////////////////////////////////////
 
 // --- try_parse macro and helper ---
 #define try_parse(ptr, ctx, parser, ...) \
-    _try_parse(#parser, ctx, save_ctx_state(ctx), parser(ctx __VA_ARGS__), (void**)ptr)
+    _try_parse(#parser, ctx, save_ctx_state(ctx), parse_ ## parser(ctx __VA_ARGS__), (void**)ptr)
 
 static void *_try_parse(char *name, parser_ctx *ctx, parser_ctx_state state, void *result, void **ptr) {
+    skip_whitespace(ctx);
     if (!result) {
         restore_ctx_state(ctx, state);
         printf("[%li] Parsing failed for %s [%.15s]\n", ctx->depth, name, ctx->input + ctx->pos);
@@ -87,371 +84,603 @@ static void *_try_parse(char *name, parser_ctx *ctx, parser_ctx_state state, voi
     return result;
 }
 
-char *parse_parens_content(parser_ctx *ctx) {
+
+#define try_parse_all(ctx, parser, args, min, max, ...)       \
+    parser_ctx_state state =  save_ctx_state(ctx);            \
+    void ** args = malloc(sizeof(void*));                     \
+    int     args ## _count = 0;                               \
+    int     args ## _success = 0;                             \
+    {                                                         \
+        ast  *current;                                        \
+        while ((current = try_parse(0, ctx, parser __VA_ARGS__)))\
+        {                                                     \
+            *args = current;                                  \
+            args ## _count += 1;                              \
+            args = realloc(args, args ## _count * sizeof(void*)); \
+        }                                                     \
+    }                                                         \
+    if ( args ## _count >= min &&  args ## _count <= max)     \
+    args ## _success = 1;                                     \
+    else                                                      \
+        restore_ctx_state(ctx, state);
+
+
+
+//////////////////////////////////////////////////////////
+//////////////  LEXERS                         ///////////
+//////////////////////////////////////////////////////////
+
+char *parse_identifier(parser_ctx *ctx) {
+    skip_whitespace(ctx);
     size_t start = ctx->pos;
-    int parens = 1; // we assume '(' was already consumed
-
-    while (ctx->pos < ctx->length && parens > 0) {
-        char c = ctx->input[ctx->pos++];
-
-        if (c == '(') parens++;
-        else if (c == ')') parens--;
-    }
-
-    if (parens != 0)
-        return NULL; // unbalanced parentheses
-
-    size_t end = ctx->pos - 1; // exclude closing ')'
-
-    size_t len = end - start;
-    char *content = malloc(len + 1);
-    memcpy(content, &ctx->input[start], len);
-    content[len] = '\0';
-
-    return content;
-}
-
-
-// --- EOF check ---
-static int ctx_eof(parser_ctx *ctx) {
-    skip_ws(ctx);
-    return ctx->input[ctx->pos] == '\0';
-}
-
-char peek_char(parser_ctx *ctx)
-{
-    return *(ctx->input + ctx->pos);
-}
-
-void advance(parser_ctx *ctx)
-{
-    ctx->pos += 1;
-}
-
-char *parse_ivar(parser_ctx *ctx) {
-    skip_ws(ctx);
-
-    size_t start = ctx->pos;
-    while (!ctx_eof(ctx)) {
-        char c = peek_char(ctx);
-        if (c == ';') {
-            advance(ctx);
-            break;
+    if (ctx->pos < ctx->length && (isalpha(ctx->input[ctx->pos]) || ctx->input[ctx->pos] == '_')) {
+        ctx->pos++;
+        while (ctx->pos < ctx->length && (isalnum(ctx->input[ctx->pos]) || ctx->input[ctx->pos] == '_')) {
+            ctx->pos++;
         }
-        advance(ctx);
+        return strndup(ctx->input + start, ctx->pos - start);
     }
-
-    size_t end = ctx->pos;
-    if (start == end) return NULL;
-
-    size_t len = end - start;
-    char *ivar_str = malloc(len + 1);
-    memcpy(ivar_str, ctx->input + start, len);
-    ivar_str[len] = '\0';
-
-    skip_ws(ctx);
-
-    return ivar_str;
+    return NULL;
 }
 
+char *parse_hex_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    if (ctx->pos + 2 < ctx->length && ctx->input[ctx->pos] == '0' && (ctx->input[ctx->pos+1] == 'x' || ctx->input[ctx->pos+1] == 'X')) {
+        ctx->pos += 2;
+        size_t digits = 0;
+        while (ctx->pos < ctx->length && isxdigit(ctx->input[ctx->pos])) {
+            ctx->pos++;
+            digits++;
+        }
+        if (digits > 0) {
+            return strndup(ctx->input + start, ctx->pos - start);
+        }
+        ctx->pos = start;
+    }
+    return NULL;
+}
 
-param *parse_param(parser_ctx *ctx) {
-    char *type = NULL, *name = NULL;
+char *parse_octal_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '0') {
+        ctx->pos++;
+        size_t digits = 0;
+        while (ctx->pos < ctx->length && ctx->input[ctx->pos] >= '0' && ctx->input[ctx->pos] <= '7') {
+            ctx->pos++;
+            digits++;
+        }
+        if (digits > 0) {
+            return strndup(ctx->input + start, ctx->pos - start);
+        }
+        ctx->pos = start;
+    }
+    return NULL;
+}
 
-    if (!try_parse(&type, ctx, parse_identifier,) || !try_parse(&name, ctx, parse_identifier,))
+char *parse_binary_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    if (ctx->pos + 2 < ctx->length && ctx->input[ctx->pos] == '0' && (ctx->input[ctx->pos+1] == 'b' || ctx->input[ctx->pos+1] == 'B')) {
+        ctx->pos += 2;
+        size_t digits = 0;
+        while (ctx->pos < ctx->length && (ctx->input[ctx->pos] == '0' || ctx->input[ctx->pos] == '1')) {
+            ctx->pos++;
+            digits++;
+        }
+        if (digits > 0) {
+            return strndup(ctx->input + start, ctx->pos - start);
+        }
+        ctx->pos = start;
+    }
+    return NULL;
+}
+
+char *parse_decimal_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    if (ctx->pos < ctx->length && ctx->input[ctx->pos] >= '1' && ctx->input[ctx->pos] <= '9') {
+        ctx->pos++;
+        while (ctx->pos < ctx->length && isdigit(ctx->input[ctx->pos])) {
+            ctx->pos++;
+        }
+        return strndup(ctx->input + start, ctx->pos - start);
+    }
+    return NULL;
+}
+
+char *parse_float_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    size_t p = ctx->pos;
+    int saw_digit = 0, saw_dot = 0, saw_exp = 0;
+    if (p < ctx->length && (ctx->input[p] == '+' || ctx->input[p] == '-')) p++;
+    while (p < ctx->length && isdigit(ctx->input[p])) { p++; saw_digit = 1; }
+    if (p < ctx->length && ctx->input[p] == '.') { p++; saw_dot = 1; }
+    while (p < ctx->length && isdigit(ctx->input[p])) { p++; saw_digit = 1; }
+    if (p < ctx->length && (ctx->input[p] == 'e' || ctx->input[p] == 'E')) {
+        p++;
+        saw_exp = 1;
+        if (p < ctx->length && (ctx->input[p] == '+' || ctx->input[p] == '-')) p++;
+        int exp_digits = 0;
+        while (p < ctx->length && isdigit(ctx->input[p])) { p++; exp_digits = 1; }
+        if (!exp_digits) return NULL;
+    }
+    if (p < ctx->length && (ctx->input[p] == 'f' || ctx->input[p] == 'F' || ctx->input[p] == 'l' || ctx->input[p] == 'L')) p++;
+    if ((saw_dot || saw_exp) && saw_digit) {
+        size_t len = p - start;
+        ctx->pos = p;
+        return strndup(ctx->input + start, len);
+    }
+    return NULL;
+}
+
+char *parse_char_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '\'') {
+        ctx->pos++;
+        while (ctx->pos < ctx->length) {
+            if (ctx->input[ctx->pos] == '\\') {
+                ctx->pos += 2;
+            } else if (ctx->input[ctx->pos] == '\'') {
+                ctx->pos++;
+                return strndup(ctx->input + start, ctx->pos - start);
+            } else {
+                ctx->pos++;
+            }
+        }
+        ctx->pos = start;
+    }
+    return NULL;
+}
+
+char *parse_string_literal(parser_ctx *ctx) {
+    skip_whitespace(ctx);
+    size_t start = ctx->pos;
+    //if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '@')  ctx->pos++;
+    if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '"') {
+        ctx->pos++;
+        while (ctx->pos < ctx->length) {
+            if (ctx->input[ctx->pos] == '\\') {
+                ctx->pos += 2;
+            } else if (ctx->input[ctx->pos] == '"') {
+                ctx->pos++;
+                return strndup(ctx->input + start, ctx->pos - start);
+            } else {
+                ctx->pos++;
+            }
+        }
+        ctx->pos = start;
+    }
+    return NULL;
+}
+
+//////////////////////////////////////////////////////////
+//////////////  PARSERS                        ///////////
+//////////////////////////////////////////////////////////
+
+statement *parse_statement(parser_ctx *ctx)
+{
+    expr *e_val = try_parse(0, ctx, expr);
+    if (e_val) {
+        make_ast(statement, output, {
+            .statement_type = is_expr,
+            .e_val = e_val
+        });
+        return output;
+    }
+    const char *base = ctx->input;
+    while (!(e_val = try_parse(0, ctx, expr)) && ctx->input[ctx->pos]) {
+        if (ctx->input[ctx->pos + 1] == '}')
+            break ;
+        ctx->pos += 1;
+    }
+    if (e_val) {
+        make_ast(statement, output, {
+            .statement_type = is_expr,
+            .e_val = e_val
+        })
+        return output;
+    }
+    make_ast(raw, r_val, {
+        .source = strndup(base, (ctx->input + ctx->pos) - base)
+    });
+    make_ast(statement, output, {
+        .statement_type = is_raw,
+        .r_val = r_val
+    })
+    return output;
+};
+
+compound_statement* parse_compound_statement(parser_ctx *ctx)
+{
+    if (!try_parse(0, ctx, exact_str,, "{"))
         return NULL;
+    try_parse_all(ctx, statement, statements, 0, -1);
+    if (!statements_success)
+        return NULL;
+    if (!try_parse(0, ctx, exact_str,, "}"))
+    {
+        free(statements);
+        return NULL;
+    }
+    make_ast(compound_statement, output, {
+        .statements = (ast**) statements,
+        .statements_count = statements_count,
+    });
+    return output;
+}
 
-    make_ast(param, node, {
-        .type = type,
+keyword_arg *parse_keyword_arg(parser_ctx *ctx) {
+    char *keyword = NULL;
+    char *type = NULL;
+    char *name = NULL;
+
+    if (!
+        try_parse(&keyword, ctx, identifier)
+        && try_parse(0, ctx, exact_str,, ":")
+        && try_parse(0, ctx, exact_str,, "(") 
+        && try_parse(&type, ctx, type)
+        && try_parse(0, ctx, exact_str,, ")")
+        && try_parse(&name, ctx, identifier)
+    ) {
+        free(keyword);
+        free(type);
+        free(name);
+        return NULL;
+    }
+    make_ast(keyword_arg, output, {
+        .keyword = keyword,
+        .type = type, 
         .name = name
     });
-    return node;
+    return output;
 }
 
-method *parse_method(parser_ctx *ctx) {
-    int is_class_method = 0;
-    if (try_parse(0, ctx, parse_str, ,"+" )) {
-        is_class_method = 1;
-    } else if (try_parse(0, ctx, parse_str,, "-" )) {
-        is_class_method = 0;
-    } else {
+method *parse_method_common(parser_ctx *ctx) {
+    int method_type;
+    char *return_type = NULL;
+
+    if (try_parse(0, ctx, exact_str,, "+")) 
+        method_type = static_method;
+    else if (try_parse(0, ctx, exact_str,, "-"))
+        method_type = member_method;
+    else 
+        return NULL;
+    if (!(try_parse(0, ctx, exact_str,, "(")
+        && (return_type = try_parse(0, ctx, type))
+        && try_parse(0, ctx, exact_str,, ")")))
+    { 
+        free(return_type); 
+        return NULL; 
+    }
+    try_parse_all(ctx, keyword_arg, args, 1, -1);
+    if (!args_success)
+    {
+        char *id = try_parse(0, ctx, identifier);
+        if (!id)
+           return NULL;
+        make_ast(keyword_arg, kw, {
+            .keyword = id,
+            .name = NULL,
+            .type = NULL
+        })
+        args = malloc(sizeof(keyword_arg*));
+        *args = kw;
+        args_count = 1;
+    }
+    make_ast(method, var, {
+        .method_type = method_type,
+        .return_type = return_type,
+        .keyword_args = (keyword_arg**) args,
+        .keyword_arg_count = args_count,
+        .body = NULL
+    });
+    return var;
+}
+
+method *parse_method_proto(parser_ctx *ctx)
+{
+    method *output = try_parse(0, ctx, method_common);
+    if (!output)
+        return  NULL;
+    if (!try_parse(0, ctx, exact_str,, ";"))
+    {
+        free(output);
         return NULL;
     }
-
-    skip_ws(ctx);
-
-    if (!try_parse(0, ctx, parse_str,, "(")) return NULL;
-    char *return_type = try_parse(0, ctx, parse_parens_content, );
-    if (!return_type) return NULL;
-
-    skip_ws(ctx);
-
-    char *selector = try_parse(0, ctx, parse_identifier);
-    if (!selector) return NULL;
-
-    struct param **params = NULL;
-    int param_count = 0;
-
-    skip_ws(ctx);
-
-    while (try_parse(0, ctx, parse_str,, ":")) {
-        skip_ws(ctx);
-
-        if (!try_parse(0, ctx, parse_str,, "(")) return NULL;
-        char *param_type = parse_parens_content(ctx);
-        if (!param_type) return NULL;
-
-        skip_ws(ctx);
-
-        char *param_name = try_parse(0, ctx, parse_identifier);
-        if (!param_name) return NULL;
-
-/*
-        make_ast(param, param, {
-            
-            .type = param_type,
-            .name = param_name 
-        });
-        */
-
-        params = realloc(params, sizeof(*params) * (param_count + 1));
-        //params[param_count++] = param;
-
-        skip_ws(ctx);
-    }
-
-    if (!try_parse(0, ctx, parse_str,, ";")) return NULL;
-
-    make_ast(method, node, {
-        /*
-        .is_class_method = is_class_method,
-        .return_type = return_type,
-        .selector = selector,
-        .params = params,
-        .param_count = param_count,
-        .body = NULL*/
-    });
-    return node;
+    return output;
 }
 
+method *parse_method_impl(parser_ctx *ctx)
+{
+    method *output = try_parse(0, ctx, method_common);
+    if (!output)
+        return  NULL;
+    compound_statement * block = try_parse(0, ctx, compound_statement);
+    if (!block)
+    {
+        free(output);
+        free(block);
+        // TODO: visitor for deletions...
+        return NULL;
+    }
+    output->body = (ast*) block;
+    return output;
+}
+
+interface *parse_interface(parser_ctx *ctx) {
+    if (!try_parse(0, ctx, exact_str,, "@interface"))
+        return NULL;
+    char *name =  try_parse(0, ctx, identifier);
+    if (!name) 
+        return NULL;
+    char *superclass_name = NULL;
+    if (try_parse(0, ctx, exact_str,, ":")) {
+        try_parse(&superclass_name, ctx, identifier);
+        if (!superclass_name) {
+            free(name);
+            return NULL;
+        }
+    }
+    compound_statement *ivars = try_parse(0, ctx, compound_statement);
+    try_parse_all(ctx, method_proto, methods, 1, -1);
+    if (!methods_success) {
+        free (name);
+        free(superclass_name);
+        // todo: delete visitor to delete ivars
+        return NULL;
+    }
+    make_ast(interface, var, {
+        .name = name,
+        .superclass_name = superclass_name,
+        .ivars = ivars,
+        .methods = (method**) methods,
+        .method_count = methods_count
+    });
+    return var;
+}
 
 implementation *parse_implementation(parser_ctx *ctx) {
-    char *name = try_parse(0, ctx, parse_identifier,);
-    if (!name)
+    if (!try_parse(0, ctx, exact_str,, "@implementation"))
         return NULL;
-    make_ast(implementation, node, {
+    char *name =  try_parse(0, ctx, identifier);
+    if (!name) 
+        return NULL;
+    
+    try_parse_all(ctx, method_impl, methods, 1, -1);
+    if (!methods_success) {
+        free (name);
+        return NULL;
+    }
+    make_ast(implementation, var, {
         .name = name,
-        .superclass_name = NULL,
-        .methods = NULL,
-        .method_count = 0
+        .methods = (method**) methods,
+        .method_count = methods_count
     });
+    return var;
+}
 
-    return node;
+message_param *parse_message_param(parser_ctx *ctx)
+{
+    char *keyword = try_parse(0, ctx, identifier);
+    if (!keyword)
+        return NULL;
+    if (!try_parse(0, ctx, exact_str,, ":"))
+    {
+        free(keyword);
+        return NULL;
+    }
+    expr *e = try_parse(0, ctx, expr);
+    if (!e) {
+        free(keyword);
+        return NULL;
+    }
+    make_ast(message_param, output, {
+        .keyword = keyword,
+        .value = e
+    });
+    return output;
 }
 
 message *parse_message(parser_ctx *ctx) {
-    make_ast(message, node, {
-        .selector = NULL,
-        .args = NULL,
-        .arg_count = 0
-    });
-    return node;
-}
+    if (!try_parse(0, ctx, exact_str,, "[")) 
+        return NULL;
+    expr *receiver = try_parse(0, ctx, expr);
+    if (!receiver) 
+        return NULL;
 
-expr *parse_expr(parser_ctx *ctx) {
-    make_ast(expr, node, {
-        .children = NULL,
-        .child_count = 0
-    });
-    return node;
-}
-
-tu *parse_tu(parser_ctx *ctx) {
-    make_ast(tu, node, {
-        .childs = malloc(sizeof(ast *)),
-        .size = 0
-    });
-
-    while (!ctx_eof(ctx)) {
-
-        ast *child = NULL;
-
-        /* === Inline parse_raw logic === */
-        size_t raw_start = ctx->pos;
-        size_t buf_cap = 256, buf_len = 0;
-        char *buf = malloc(buf_cap);
-        int in_str = 0, in_comm = 0;
-        char str_del = 0;
-
-        while (ctx->input[ctx->pos]) {
-            char c  = ctx->input[ctx->pos];
-            char c2 = ctx->input[ctx->pos+1];
-
-            /* === Lookahead for [id id] ObjC message === */
-            if (!in_str && !in_comm && c == '[') {
-                parser_ctx_state st = save_ctx_state(ctx);
-                ctx->pos++; skip_ws(ctx);
-                char *id1 = parse_identifier(ctx);
-                skip_ws(ctx);
-                char *id2 = id1 ? parse_identifier(ctx) : NULL;
-                int is_msg = (id1 && id2);
-                free(id1); free(id2);
-                restore_ctx_state(ctx, st);
-                printf("f1\n");
-                if (is_msg) break;
-            }
-
-            /* === Lookahead for @interface or @implementation === */
-            if (!in_str && !in_comm && c == '@') {
-                parser_ctx_state st = save_ctx_state(ctx);
-                ctx->pos++; skip_ws(ctx);
-                if (    parse_str(ctx, "interface")
-                     || parse_str(ctx, "implementation")) {
-                    restore_ctx_state(ctx, st);  
-                    
-                    printf("f2\n");
-
-                    break;
-                }
-                restore_ctx_state(ctx, st);
-            }
-
-            /* === String handling === */
-            if (!in_comm && (c=='"' || c=='\'')) {
-                if (!in_str) { in_str=1; str_del=c; }
-                else if (c==str_del) {
-                    size_t back=ctx->pos; int esc=0;
-                    while (back>raw_start && ctx->input[--back]=='\\') esc++;
-                    if ((esc%2)==0) in_str=0;
-                }
-                buf[buf_len++] = c; ctx->pos++;
-            }
-            else if (in_str) {
-                buf[buf_len++] = c; ctx->pos++;
-            }
-            /* === Comment handling === */
-            else if (!in_str && c=='/' && c2=='/') {
-                in_comm=1; buf[buf_len++]=c; buf[buf_len++]=c2; ctx->pos+=2;
-            }
-            else if (in_comm==1) {
-                buf[buf_len++] = c; ctx->pos++;
-                if (c=='\n') in_comm=0;
-            }
-            else if (!in_str && c=='/' && c2=='*') {
-                in_comm=2; buf[buf_len++]=c; buf[buf_len++]=c2; ctx->pos+=2;
-            }
-            else if (in_comm==2) {
-                buf[buf_len++] = c;
-                if (c=='*' && ctx->input[ctx->pos+1]=='/') {
-                    buf[buf_len++]='/'; ctx->pos+=2; in_comm=0;
-                } else ctx->pos++;
-            }
-            /* === Preprocessor lines === */
-            else if (!in_str && !in_comm && c=='#') {
-                size_t line_start=ctx->pos;
-                while (ctx->input[ctx->pos] && ctx->input[ctx->pos]!='\n') ctx->pos++;
-                if (ctx->input[ctx->pos]=='\n') ctx->pos++;
-                size_t len=ctx->pos-line_start;
-                if (buf_len+len+1>buf_cap) { buf_cap=(buf_len+len+1)*2; buf=realloc(buf,buf_cap); }
-                memcpy(buf+buf_len, ctx->input+line_start, len); buf_len+=len;
-            }
-            /* === Default case: copy one char === */
-            else {
-                buf[buf_len++] = c; ctx->pos++;
-            }
-
-            if (buf_len+1 > buf_cap) { buf_cap*=2; buf=realloc(buf,buf_cap); }
-        }
-
-        printf("%.15s\n", ctx->input + ctx->pos);
-        /* If we collected raw text before ObjC marker, emit raw */
-        if (ctx->pos > raw_start) {
-            buf[buf_len] = '\0';
-            make_ast(raw, node, { .source=buf });
-            child = (ast*)node;
-            
-        }
-        /* Otherwise try ObjC make_asts directly */
-        else if (   try_parse(&child, ctx, parse_interface,)
-                 || try_parse(&child, ctx, parse_implementation,))
+    char *sel1 = NULL;
+    try_parse_all(ctx, message_param, params, 1, -1);
+    if (!params_success) {
+        try_parse(&sel1, ctx, identifier);
+        if (!sel1)
         {
-            
-            free(buf); /* discard unused raw buffer */
+            free(receiver);
+            return NULL;
         }
-        else {
-            /* nothing left to parse */
-            free(buf);
-            break;
-        }
-
-
-        if (node->size)
-            node->childs = realloc(node->childs, sizeof(ast *) * (node->size+1));
-
-        node->childs[node->size++] = child;
+        make_ast(message_param, param, {
+            .keyword = sel1,
+            .value = NULL
+        })
+        params = malloc(sizeof(message_param*));
+        *params = param;
+        params_count = 1;
     }
-
-    printf("%li\n", node->size);
-    return node;
+    if (!try_parse(0, ctx, exact_str,, "]")) 
+    { 
+        free(receiver);
+        free(sel1);
+        // todo: free all params using delete visitor
+        return NULL; 
+    }
+    make_ast(message, var, {
+        .receiver = receiver,
+        .params = (message_param**) params,
+        .params_count = params_count
+    });
+    return var;
 }
 
-
-interface *parse_interface(parser_ctx *ctx) {
-    if (!try_parse(0, ctx, parse_str,, "@interface"))
-        return NULL;
-
-    skip_ws(ctx);
-
-    char *identifier = try_parse(0, ctx, parse_identifier,);
-    if (!identifier)
-        return NULL;
-
-    skip_ws(ctx);
-
-    // Optional superclass: ": SuperClass"
-    char *superclass_name = NULL;
-    if (try_parse(0, ctx, parse_str,, ":")) {
-        skip_ws(ctx);
-        superclass_name = try_parse(0, ctx, parse_identifier,);
-        if (!superclass_name)
-            return NULL;
-        skip_ws(ctx);
-    }
-
-    // Optional ivar block: { ivar declarations }
-    char **ivars = NULL;
-    int ivar_count = 0;
-    if (try_parse(0, ctx, parse_str,, "{")) {
-        skip_ws(ctx);
-        while (!try_parse(0, ctx, parse_str ,, "}")) {
-            char *ivar = parse_ivar(ctx);
-            if (!ivar) return NULL;
-            ivars = realloc(ivars, sizeof(*ivars) * (ivar_count + 1));
-            ivars[ivar_count++] = ivar;
-            skip_ws(ctx);
+top_level *parse_top_level(parser_ctx *ctx) {
+    make_ast(top_level, output, {.childs = malloc(sizeof(void*)), .size = 0});
+    const char *start_raw = NULL;
+    while (ctx->pos < ctx->length) {
+        ast *node = NULL;
+        node = NULL;
+        if (try_parse(&node, ctx, interface) || try_parse(&node, ctx, implementation) || try_parse(&node, ctx, expr)) {
+            if (start_raw)
+            {
+                make_ast(raw, r_node, {
+                    .source = strndup(start_raw, ctx->input + ctx->pos - start_raw)
+                });
+                output->size += 1;
+                output->childs = realloc(output->childs, output->size * sizeof(ast*));
+                output->childs[output->size] = (ast*) r_node;
+            }
+            output->size += 1;
+            output->childs = realloc(output->childs, output->size * sizeof(ast*));
+            output->childs[output->size] = node;
+            start_raw = NULL;
+        } else {
+            if (!start_raw)
+                start_raw = ctx->input;
+            ctx->pos += 1;
         }
-        skip_ws(ctx);
     }
-
-    printf("testin methods-----\n");
-    // Methods: accumulate until @end
-    struct method **methods = NULL;
-    int method_count = 0;
-    while (!try_parse(0, ctx, parse_str,, "@end")) {
-        struct method *method = try_parse(0, ctx, parse_method, );
-        if (!method) return NULL;
-        methods = realloc(methods, sizeof(*methods) * (method_count + 1));
-        methods[method_count++] = method;
-        skip_ws(ctx);
+    if (start_raw) {
+        make_ast(raw, r_node, {
+            .source = strndup(start_raw, ctx->input + ctx->pos - start_raw)
+        });
+        output->size += 1;
+        output->childs = realloc(output->childs, output->size * sizeof(ast*));
+        output->childs[output->size] = (ast*) r_node;
     }
+    return output;
+}
 
-    make_ast(interface, node, {
-        .name = identifier,
-        .superclass_name = superclass_name,
-        .ivars = ivars,
-        .ivar_count = ivar_count,
-        .methods = methods,
-        .method_count = method_count
-    });
-    return node;
+// Top-level expression parser
+expr *parse_expr(parser_ctx *ctx) {
+    return parse_assignment_expr(ctx);
+}
+
+expr *parse_assignment_expr(parser_ctx *ctx) {
+    // TODO: implement assignment parsing
+    return parse_conditional_expr(ctx);
+}
+
+expr *parse_conditional_expr(parser_ctx *ctx) {
+    // TODO: implement conditional parsing
+    return parse_logical_or_expr(ctx);
+}
+
+expr *parse_logical_or_expr(parser_ctx *ctx) {
+    // TODO: implement logical or parsing
+    return parse_logical_and_expr(ctx);
+}
+
+expr *parse_logical_and_expr(parser_ctx *ctx) {
+    // TODO: implement logical and parsing
+    return parse_inclusive_or_expr(ctx);
+}
+
+expr *parse_inclusive_or_expr(parser_ctx *ctx) {
+    // TODO: implement inclusive or parsing
+    return parse_exclusive_or_expr(ctx);
+}
+
+expr *parse_exclusive_or_expr(parser_ctx *ctx) {
+    // TODO: implement exclusive or parsing
+    return parse_and_expr(ctx);
+}
+
+expr *parse_and_expr(parser_ctx *ctx) {
+    // TODO: implement and parsing
+    return parse_equality_expr(ctx);
+}
+
+expr *parse_equality_expr(parser_ctx *ctx) {
+    // TODO: implement equality parsing
+    return parse_relational_expr(ctx);
+}
+
+expr *parse_relational_expr(parser_ctx *ctx) {
+    // TODO: implement relational parsing
+    return parse_shift_expr(ctx);
+}
+
+expr *parse_shift_expr(parser_ctx *ctx) {
+    // TODO: implement shift parsing
+    return parse_additive_expr(ctx);
+}
+
+expr *parse_additive_expr(parser_ctx *ctx) {
+    expr *left = parse_multiplicative_expr(ctx);
+    if (!left) return NULL;
+    while (1) {
+        skip_whitespace(ctx);
+        char op = 0;
+        if (ctx->input[ctx->pos] == '+') op = '+';
+        else if (ctx->input[ctx->pos] == '-') op = '-';
+        else break;
+        ctx->pos++;
+        expr *right = parse_multiplicative_expr(ctx);
+        if (!right) break;
+        make_ast(binop_expr, bin, {.left = (ast*)left, .op = (char[]){op, 0}, .right = (ast*)right});
+        left = (expr*)bin;
+    }
+    return left;
+}
+
+expr *parse_multiplicative_expr(parser_ctx *ctx) {
+    expr *left = parse_unary_expr(ctx);
+    if (!left) return NULL;
+    while (1) {
+        skip_whitespace(ctx);
+        char op = 0;
+        if (ctx->input[ctx->pos] == '*') op = '*';
+        else if (ctx->input[ctx->pos] == '/') op = '/';
+        else if (ctx->input[ctx->pos] == '%') op = '%';
+        else break;
+        ctx->pos++;
+        expr *right = parse_unary_expr(ctx);
+        if (!right) break;
+        make_ast(binop_expr, bin, {.left = (ast*)left, .op = (char[]){op, 0}, .right = (ast*)right});
+        left = (expr*)bin;
+    }
+    return left;
+}
+
+expr *parse_unary_expr(parser_ctx *ctx) {
+    // TODO: implement unary parsing
+    return parse_postfix_expr(ctx);
+}
+
+expr *parse_postfix_expr(parser_ctx *ctx) {
+    // TODO: implement postfix parsing
+    return parse_primary_expr(ctx);
+}
+
+expr *parse_primary_expr(parser_ctx *ctx) {
+    char *id = NULL;
+    try_parse(&id, ctx, identifier);
+    if (id) {
+        make_ast(raw, rawnode, {.source = id});
+        ast **children = malloc(sizeof(ast*));
+        children[0] = (ast*)rawnode;
+        make_ast(expr, var, {.children = children, .child_count = 1});
+        return var;
+    }
+    char *num = NULL;
+    try_parse(&num, ctx, decimal_literal);
+    if (num) {
+        make_ast(raw, rawnode, {.source = num});
+        ast **children = malloc(sizeof(ast*));
+        children[0] = (ast*)rawnode;
+        make_ast(expr, var, {.children = children, .child_count = 1});
+        return var;
+    }
+    return NULL;
 }
