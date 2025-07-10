@@ -64,6 +64,9 @@
 
 - (void)setAge:(int)age {
     _age = age;
+    SEL sel3 = @selector   (     doSomethingWithParam:andAnotherParam:);
+    (void) _age;
+    (void) sel3;
 }
 
 - (int)age {

@@ -1,6 +1,7 @@
 #include "./parser.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "ast.h"
 #include "visitors/dumper.h"
 #include "visitors/transpiler.h"
 #include <string.h>
@@ -54,11 +55,11 @@ static char *read_file(const char *filename) {
     return buf;
 }
 
-static void run_visitor(const char *visitor, tu *root) {
+static void run_visitor(const char *visitor, top_level *root) {
     if (strcmp(visitor, "dumper") == 0) {
-       dumper_visitor.tu(root, 0);
+       dumper_visitor.top_level(root, 0);
     } else if (strcmp(visitor, "transpiler") == 0) {
-       transpiler.tu(root, NULL);
+       transpiler.top_level(root, NULL);
     } else {
         fprintf(stderr, "Unknown visitor: %s\n", visitor);
         exit(1);
@@ -74,7 +75,7 @@ int main(int ac, char **av) {
         return 1;
     }
     struct parser_ctx ctx = { .input = input, .pos = 0, .length = strlen(input) };
-    tu *root = parse_tu(&ctx);
+    top_level *root = parse_top_level(&ctx);
     if (!root) {
         fprintf(stderr, "Failed to parse input.\n");
         free(input);

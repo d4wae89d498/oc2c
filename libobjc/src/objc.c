@@ -148,3 +148,9 @@ static struct objc_class _Object_class = {
 };
 
 Class Object_class = &_Object_class; 
+
+
+int __check_if_nonnull_ptr(void *ptr)
+{
+    return ptr != NULL;
+}

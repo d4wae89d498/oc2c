@@ -13,7 +13,6 @@ struct ast_visitor;
 typedef struct ast_visitor ast_visitor;
 
 typedef struct ast ast;
-typedef struct ivar ivar;
 typedef struct method method;
 typedef struct interface interface;
 typedef struct implementation implementation;
@@ -25,26 +24,32 @@ typedef struct binop_expr binop_expr;
 typedef struct conditional_expr conditional_expr;
 typedef struct unary_op_expr unary_op_expr;
 typedef struct cast_expr cast_expr;
-typedef struct call_expr call_expr;
-typedef struct member_access member_access;
 typedef struct keyword_arg keyword_arg;
 typedef struct compound_statement compound_statement;
 typedef struct statement statement;
 typedef struct message_param message_param;
-
+typedef struct selector selector;
+typedef struct encode encode;
 
 typedef struct ast_visitor 
 {
-    void *(*parse_compound_statement)(compound_statement *self, void*);
     void *(*method)(method *self, void*);
     void *(*interface)(interface *self, void*);
     void *(*implementation)(implementation *self, void*);
     void *(*message)(message *self, void*);
     void *(*raw)(raw *self, void*);
-    void *(*tu)(top_level *self, void*);
+    void *(*top_level)(top_level *self, void*);
     void *(*expr)(expr *self, void*);
     void *(*statement)(statement *self, void*);
     void *(*message_param)(message_param *self, void*);
+    void *(*selector)(selector *self, void*);
+    void *(*encode)(encode *self, void*);
+    void *(*binop_expr)(binop_expr *self, void*);
+    void *(*compound_statement)(compound_statement *self, void*);
+    void *(*unary_op_expr)(unary_op_expr *self, void*);
+    void *(*cast_expr)(cast_expr *self, void*);
+    void *(*conditional_expr)(conditional_expr *self, void*);
+    void *(*keyword_arg)(keyword_arg *self, void*);
 } ast_visitor;
 
 struct ast {
@@ -107,8 +112,8 @@ struct message {
 
 struct expr {
     ast base;
-    ast **children;
-    int child_count;
+    ast **exprs;
+    int exprs_count;
 };
 
 struct binop_expr {
@@ -133,6 +138,7 @@ struct unary_op_expr {
         unary_op_expr_prefix,
         unary_op_expr_sufix
     } pos;
+    ast* arg;
 };
 
 struct cast_expr {
@@ -141,38 +147,33 @@ struct cast_expr {
     ast *expr;
 };
 
-struct call_expr {
-    ast base;
-    ast *callee;
-    ast **args;
-    size_t args_count;
-};
-
-struct member_access {
-    ast base;
-    ast *callee;
-    char *id;
-    enum {
-        member_access_arrow,
-        member_access_dot
-    } pos;
-};
-
-
 struct raw {
     ast base;
     char *source;
 };
 
+struct selector {
+    ast base;
+    char *str;
+};
+
+struct encode {
+    ast base;
+    char *type;
+};
+
+
 struct statement {
     ast base;
     enum {
         is_raw, 
-        is_expr
+        is_expr,
+        is_cp
     } statement_type;
     union {
         raw *r_val;
         expr *e_val;
+        compound_statement *cp_val;
     };
 };
 
@@ -203,10 +204,10 @@ void *binop_expr_accept(ast *self, ast_visitor visitor, void* arg);
 void *conditional_expr_accept(ast *self, ast_visitor visitor, void* arg);
 void *unary_op_expr_accept(ast *self, ast_visitor visitor, void* arg);
 void *cast_expr_accept(ast *self, ast_visitor visitor, void* arg);
-void *call_expr_accept(ast *self, ast_visitor visitor, void* arg);
-void *member_access_accept(ast *self, ast_visitor visitor, void* arg);
 void *keyword_arg_accept(ast *self, ast_visitor visitor, void* arg);
 void *message_param_accept(ast *self, ast_visitor visitor, void* arg);
+void *selector_accept(ast *self, ast_visitor visitor, void* arg);
+void *encode_accept(ast *self, ast_visitor visitor, void* arg);
 
 
 #endif // AST_H

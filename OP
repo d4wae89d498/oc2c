@@ -1,0 +1,2325 @@
+----- [0] Parsing FAILED for exact_str at [test
+
+// hel]..
+----- [0] Parsing FAILED for interface at [test
+
+// hel]..
+----- [0] Parsing FAILED for exact_str at [test
+
+// hel]..
+----- [0] Parsing FAILED for implementation at [test
+
+// hel]..
+.. [test
+
+// h]!
+----- [0] Parsing FAILED for exact_str at [test
+
+// hel]..
+----- [0] Parsing FAILED for compound_statement at [test
+
+// hel]..
+----- [1] Parsing FAILED for exact_str at [est
+
+// hell]..
+----- [1] Parsing FAILED for interface at [est
+
+// hell]..
+----- [1] Parsing FAILED for exact_str at [est
+
+// hell]..
+----- [1] Parsing FAILED for implementation at [est
+
+// hell]..
+.. [est
+
+// he]!
+----- [1] Parsing FAILED for exact_str at [est
+
+// hell]..
+----- [1] Parsing FAILED for compound_statement at [est
+
+// hell]..
+----- [2] Parsing FAILED for exact_str at [st
+
+// hello]..
+----- [2] Parsing FAILED for interface at [st
+
+// hello]..
+----- [2] Parsing FAILED for exact_str at [st
+
+// hello]..
+----- [2] Parsing FAILED for implementation at [st
+
+// hello]..
+.. [st
+
+// hel]!
+----- [2] Parsing FAILED for exact_str at [st
+
+// hello]..
+----- [2] Parsing FAILED for compound_statement at [st
+
+// hello]..
+----- [3] Parsing FAILED for exact_str at [t
+
+// hello
+]..
+----- [3] Parsing FAILED for interface at [t
+
+// hello
+]..
+----- [3] Parsing FAILED for exact_str at [t
+
+// hello
+]..
+----- [3] Parsing FAILED for implementation at [t
+
+// hello
+]..
+.. [t
+
+// hell]!
+----- [3] Parsing FAILED for exact_str at [t
+
+// hello
+]..
+----- [3] Parsing FAILED for compound_statement at [t
+
+// hello
+]..
+[16] Parsing ok for exact_str at [@interface]..
+[26] Parsing ok for identifier at [ name]..
+----- [31] Parsing FAILED for exact_str at [ 
+
++ (void) ]..
+begin.
+.. [+ (void) h]!
+----- [34] Parsing FAILED for exact_str at [+ (void) hel]..
+----- [31] Parsing FAILED for compound_statement at [ 
+
++ (void) ]..
+(nil).
+[34] Parsing ok for exact_str at [+]..
+[35] Parsing ok for paren_type at [ (void)]..
+[43] Parsing ok for identifier at [hello]..
+----- [48] Parsing FAILED for exact_str at [ ;
+
++ (void)]..
+----- [42] Parsing FAILED for keyword_arg at [ hello ;
+
++ ]..
+[42] Parsing ok for identifier at [ hello]..
+[34] Parsing ok for method_common at [+ (void) hello]..
+[48] Parsing ok for exact_str at [ ;]..
+[31] Parsing ok for method_proto at [ 
+
++ (void) hello ;]..
+[52] Parsing ok for exact_str at [+]..
+[53] Parsing ok for paren_type at [ (void)]..
+[61] Parsing ok for identifier at [helloWith]..
+[70] Parsing ok for exact_str at [:]..
+[71] Parsing ok for paren_type at [(int)]..
+[76] Parsing ok for identifier at [a]..
+[60] Parsing ok for keyword_arg at [ helloWith:(int)a]..
+----- [77] Parsing FAILED for identifier at [;
+
+
+
+@end
+
+{]..
+----- [77] Parsing FAILED for keyword_arg at [;
+
+
+
+@end
+
+{]..
+[52] Parsing ok for method_common at [+ (void) helloWith:(int)a]..
+[77] Parsing ok for exact_str at [;]..
+[50] Parsing ok for method_proto at [
+
++ (void) helloWith:(int)a;]..
+----- [82] Parsing FAILED for exact_str at [@end
+
+{
+    ]..
+----- [82] Parsing FAILED for exact_str at [@end
+
+{
+    ]..
+----- [82] Parsing FAILED for method_common at [@end
+
+{
+    ]..
+----- [78] Parsing FAILED for method_proto at [
+
+
+
+@end
+
+{
+]..
+???ok![78] Parsing ok for exact_str at [
+
+
+
+@end]..
+[4] Parsing ok for interface at [
+
+// hello
+
+@interface name 
+
++ (void) hello ;
+
++ (void) helloWith:(int)a;
+
+
+
+@end]..
+----- [88] Parsing FAILED for exact_str at [{
+    YOYO =]..
+----- [86] Parsing FAILED for interface at [
+
+{
+    YOYO]..
+----- [88] Parsing FAILED for exact_str at [{
+    YOYO =]..
+----- [86] Parsing FAILED for implementation at [
+
+{
+    YOYO]..
+.. [{
+    YOYO]!
+[88] Parsing ok for exact_str at [{]..
+----- [94] Parsing FAILED for exact_str at [YOYO = OK;
+ ]..
+----- [94] Parsing FAILED for exact_str at [YOYO = OK;
+ ]..
+----- [94] Parsing FAILED for exact_str at [YOYO = OK;
+ ]..
+????
+[94] Parsing ok for identifier_raw at [YOYO]..
+parse ok pe
+[94] Parsing ok for primary_expr at [YOYO]..
+pf expr ok
+[94] Parsing ok for postfix_expr at [YOYO]..
+ue ok
+[94] Parsing ok for unary_expr at [YOYO]..
+[99] Parsing ok for exact_str at [=]..
+[98] Parsing ok for assignment_expr_op at [ =]..
+----- [101] Parsing FAILED for exact_str at [OK;
+    int ]..
+----- [101] Parsing FAILED for exact_str at [OK;
+    int ]..
+????
+[101] Parsing ok for identifier_raw at [OK]..
+parse ok pe
+[101] Parsing ok for primary_expr at [OK]..
+pf expr ok
+[101] Parsing ok for postfix_expr at [OK]..
+ue ok
+[101] Parsing ok for unary_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for assignment_expr_op at [;
+    int x ]..
+----- [101] Parsing FAILED for paren_type at [OK;
+    int ]..
+----- [101] Parsing FAILED for exact_str at [OK;
+    int ]..
+----- [101] Parsing FAILED for exact_str at [OK;
+    int ]..
+????
+[101] Parsing ok for identifier_raw at [OK]..
+parse ok pe
+[101] Parsing ok for primary_expr at [OK]..
+pf expr ok
+[101] Parsing ok for postfix_expr at [OK]..
+ue ok
+[101] Parsing ok for cast_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for mult_expr_op at [;
+    int x ]..
+[101] Parsing ok for mult_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for add_expr_op at [;
+    int x ]..
+[101] Parsing ok for add_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for shift_expr_op at [;
+    int x ]..
+[101] Parsing ok for shift_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for relational_expr_op at [;
+    int x ]..
+[101] Parsing ok for relational_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for equality_expr_op at [;
+    int x ]..
+[101] Parsing ok for equality_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for and_expr_op at [;
+    int x ]..
+[101] Parsing ok for and_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for xor_expr_op at [;
+    int x ]..
+[101] Parsing ok for xor_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for or_expr_op at [;
+    int x ]..
+[101] Parsing ok for or_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for logical_and_expr_op at [;
+    int x ]..
+[101] Parsing ok for logical_and_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+----- [103] Parsing FAILED for logical_or_expr_op at [;
+    int x ]..
+[101] Parsing ok for logical_or_expr at [OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+[101] Parsing ok for conditional_expr at [OK]..
+[100] Parsing ok for assignment_expr at [ OK]..
+[94] Parsing ok for assignment_expr at [YOYO = OK]..
+----- [103] Parsing FAILED for exact_str at [;
+    int x ]..
+[94] Parsing ok for expr at [YOYO = OK]..
+[103] Parsing ok for exact_str at [;]..
+[89] Parsing ok for statement at [
+    YOYO = OK;]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [104] Parsing FAILED for statement at [
+    int x =]..
+----- [104] Parsing FAILED for exact_str at [
+    int x =]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [105] Parsing FAILED for statement at [    int x = ]..
+----- [105] Parsing FAILED for exact_str at [    int x = ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [106] Parsing FAILED for statement at [   int x = 5]..
+----- [106] Parsing FAILED for exact_str at [   int x = 5]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [107] Parsing FAILED for statement at [  int x = 5;]..
+----- [107] Parsing FAILED for exact_str at [  int x = 5;]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [108] Parsing FAILED for statement at [ int x = 5;
+]..
+----- [108] Parsing FAILED for exact_str at [ int x = 5;
+]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for unary_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for paren_type at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+????
+[109] Parsing ok for identifier_raw at [int]..
+parse ok pe
+[109] Parsing ok for primary_expr at [int]..
+pf expr ok
+[109] Parsing ok for postfix_expr at [int]..
+ue ok
+[109] Parsing ok for cast_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for mult_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for add_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for shift_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for relational_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for equality_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for xor_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for or_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_and_expr at [int]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[109] Parsing ok for logical_or_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for conditional_expr at [int]..
+[109] Parsing ok for assignment_expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[109] Parsing ok for expr at [int]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [109] Parsing FAILED for statement at [int x = 5;
+ ]..
+----- [109] Parsing FAILED for exact_str at [int x = 5;
+ ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+????
+[110] Parsing ok for identifier_raw at [nt]..
+parse ok pe
+[110] Parsing ok for primary_expr at [nt]..
+pf expr ok
+[110] Parsing ok for postfix_expr at [nt]..
+ue ok
+[110] Parsing ok for unary_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [110] Parsing FAILED for paren_type at [nt x = 5;
+  ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+????
+[110] Parsing ok for identifier_raw at [nt]..
+parse ok pe
+[110] Parsing ok for primary_expr at [nt]..
+pf expr ok
+[110] Parsing ok for postfix_expr at [nt]..
+ue ok
+[110] Parsing ok for cast_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for mult_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for add_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for shift_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for relational_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for equality_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for and_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for xor_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for or_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for logical_and_expr at [nt]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[110] Parsing ok for logical_or_expr at [nt]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[110] Parsing ok for conditional_expr at [nt]..
+[110] Parsing ok for assignment_expr at [nt]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[110] Parsing ok for expr at [nt]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [110] Parsing FAILED for statement at [nt x = 5;
+  ]..
+----- [110] Parsing FAILED for exact_str at [nt x = 5;
+  ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+????
+[111] Parsing ok for identifier_raw at [t]..
+parse ok pe
+[111] Parsing ok for primary_expr at [t]..
+pf expr ok
+[111] Parsing ok for postfix_expr at [t]..
+ue ok
+[111] Parsing ok for unary_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for assignment_expr_op at [ x = 5;
+    ]..
+----- [111] Parsing FAILED for paren_type at [t x = 5;
+   ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+????
+[111] Parsing ok for identifier_raw at [t]..
+parse ok pe
+[111] Parsing ok for primary_expr at [t]..
+pf expr ok
+[111] Parsing ok for postfix_expr at [t]..
+ue ok
+[111] Parsing ok for cast_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for mult_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for mult_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for add_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for add_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for shift_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for shift_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for relational_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for relational_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for equality_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for equality_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for and_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for and_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for xor_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for xor_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for or_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for or_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_and_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for logical_and_expr at [t]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [112] Parsing FAILED for logical_or_expr_op at [ x = 5;
+    ]..
+[111] Parsing ok for logical_or_expr at [t]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[111] Parsing ok for conditional_expr at [t]..
+[111] Parsing ok for assignment_expr at [t]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+[111] Parsing ok for expr at [t]..
+----- [112] Parsing FAILED for exact_str at [ x = 5;
+    ]..
+----- [111] Parsing FAILED for statement at [t x = 5;
+   ]..
+----- [111] Parsing FAILED for exact_str at [t x = 5;
+   ]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+----- [113] Parsing FAILED for exact_str at [x = 5;
+    f]..
+????
+[113] Parsing ok for identifier_raw at [x]..
+parse ok pe
+[113] Parsing ok for primary_expr at [x]..
+pf expr ok
+[113] Parsing ok for postfix_expr at [x]..
+ue ok
+[113] Parsing ok for unary_expr at [x]..
+[115] Parsing ok for exact_str at [=]..
+[114] Parsing ok for assignment_expr_op at [ =]..
+----- [117] Parsing FAILED for exact_str at [5;
+    f = 4]..
+----- [117] Parsing FAILED for exact_str at [5;
+    f = 4]..
+????
+----- [117] Parsing FAILED for identifier_raw at [5;
+    f = 4]..
+b4< 117
+----- [117] Parsing FAILED for hex_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for octal_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for binary_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for float_literal at [5;
+    f = 4]..
+[117] Parsing ok for decimal_literal at [5]..
+after< 118
+parse ok :: 5
+[117] Parsing ok for literal at [5]..
+parse ok pe
+[117] Parsing ok for primary_expr at [5]..
+pf expr ok
+[117] Parsing ok for postfix_expr at [5]..
+ue ok
+[117] Parsing ok for unary_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for assignment_expr_op at [;
+    f = 42]..
+----- [117] Parsing FAILED for paren_type at [5;
+    f = 4]..
+----- [117] Parsing FAILED for exact_str at [5;
+    f = 4]..
+----- [117] Parsing FAILED for exact_str at [5;
+    f = 4]..
+????
+----- [117] Parsing FAILED for identifier_raw at [5;
+    f = 4]..
+b4< 117
+----- [117] Parsing FAILED for hex_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for octal_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for binary_literal at [5;
+    f = 4]..
+----- [117] Parsing FAILED for float_literal at [5;
+    f = 4]..
+[117] Parsing ok for decimal_literal at [5]..
+after< 118
+parse ok :: 5
+[117] Parsing ok for literal at [5]..
+parse ok pe
+[117] Parsing ok for primary_expr at [5]..
+pf expr ok
+[117] Parsing ok for postfix_expr at [5]..
+ue ok
+[117] Parsing ok for cast_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for mult_expr_op at [;
+    f = 42]..
+[117] Parsing ok for mult_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for add_expr_op at [;
+    f = 42]..
+[117] Parsing ok for add_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for shift_expr_op at [;
+    f = 42]..
+[117] Parsing ok for shift_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for relational_expr_op at [;
+    f = 42]..
+[117] Parsing ok for relational_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for equality_expr_op at [;
+    f = 42]..
+[117] Parsing ok for equality_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for and_expr_op at [;
+    f = 42]..
+[117] Parsing ok for and_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for xor_expr_op at [;
+    f = 42]..
+[117] Parsing ok for xor_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for or_expr_op at [;
+    f = 42]..
+[117] Parsing ok for or_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for logical_and_expr_op at [;
+    f = 42]..
+[117] Parsing ok for logical_and_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+----- [118] Parsing FAILED for logical_or_expr_op at [;
+    f = 42]..
+[117] Parsing ok for logical_or_expr at [5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+[117] Parsing ok for conditional_expr at [5]..
+[116] Parsing ok for assignment_expr at [ 5]..
+[113] Parsing ok for assignment_expr at [x = 5]..
+----- [118] Parsing FAILED for exact_str at [;
+    f = 42]..
+[113] Parsing ok for expr at [x = 5]..
+[118] Parsing ok for exact_str at [;]..
+[112] Parsing ok for statement at [ x = 5;]..
+----- [124] Parsing FAILED for exact_str at [f = 42;
+    ]..
+----- [124] Parsing FAILED for exact_str at [f = 42;
+    ]..
+----- [124] Parsing FAILED for exact_str at [f = 42;
+    ]..
+????
+[124] Parsing ok for identifier_raw at [f]..
+parse ok pe
+[124] Parsing ok for primary_expr at [f]..
+pf expr ok
+[124] Parsing ok for postfix_expr at [f]..
+ue ok
+[124] Parsing ok for unary_expr at [f]..
+[126] Parsing ok for exact_str at [=]..
+[125] Parsing ok for assignment_expr_op at [ =]..
+----- [128] Parsing FAILED for exact_str at [42;
+    42 -]..
+----- [128] Parsing FAILED for exact_str at [42;
+    42 -]..
+????
+----- [128] Parsing FAILED for identifier_raw at [42;
+    42 -]..
+b4< 128
+----- [128] Parsing FAILED for hex_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for octal_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for binary_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for float_literal at [42;
+    42 -]..
+[128] Parsing ok for decimal_literal at [42]..
+after< 130
+parse ok :: 42
+[128] Parsing ok for literal at [42]..
+parse ok pe
+[128] Parsing ok for primary_expr at [42]..
+pf expr ok
+[128] Parsing ok for postfix_expr at [42]..
+ue ok
+[128] Parsing ok for unary_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for assignment_expr_op at [;
+    42 - 1]..
+----- [128] Parsing FAILED for paren_type at [42;
+    42 -]..
+----- [128] Parsing FAILED for exact_str at [42;
+    42 -]..
+----- [128] Parsing FAILED for exact_str at [42;
+    42 -]..
+????
+----- [128] Parsing FAILED for identifier_raw at [42;
+    42 -]..
+b4< 128
+----- [128] Parsing FAILED for hex_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for octal_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for binary_literal at [42;
+    42 -]..
+----- [128] Parsing FAILED for float_literal at [42;
+    42 -]..
+[128] Parsing ok for decimal_literal at [42]..
+after< 130
+parse ok :: 42
+[128] Parsing ok for literal at [42]..
+parse ok pe
+[128] Parsing ok for primary_expr at [42]..
+pf expr ok
+[128] Parsing ok for postfix_expr at [42]..
+ue ok
+[128] Parsing ok for cast_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for mult_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for mult_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for add_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for add_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for shift_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for shift_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for relational_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for relational_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for equality_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for equality_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for and_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for and_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for xor_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for xor_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for or_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for or_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for logical_and_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for logical_and_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+----- [130] Parsing FAILED for logical_or_expr_op at [;
+    42 - 1]..
+[128] Parsing ok for logical_or_expr at [42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+[128] Parsing ok for conditional_expr at [42]..
+[127] Parsing ok for assignment_expr at [ 42]..
+[124] Parsing ok for assignment_expr at [f = 42]..
+----- [130] Parsing FAILED for exact_str at [;
+    42 - 1]..
+[124] Parsing ok for expr at [f = 42]..
+[130] Parsing ok for exact_str at [;]..
+[119] Parsing ok for statement at [
+    f = 42;]..
+----- [136] Parsing FAILED for exact_str at [42 - 12 + te]..
+----- [136] Parsing FAILED for exact_str at [42 - 12 + te]..
+----- [136] Parsing FAILED for exact_str at [42 - 12 + te]..
+????
+----- [136] Parsing FAILED for identifier_raw at [42 - 12 + te]..
+b4< 136
+----- [136] Parsing FAILED for hex_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for octal_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for binary_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for float_literal at [42 - 12 + te]..
+[136] Parsing ok for decimal_literal at [42]..
+after< 138
+parse ok :: 42
+[136] Parsing ok for literal at [42]..
+parse ok pe
+[136] Parsing ok for primary_expr at [42]..
+pf expr ok
+[136] Parsing ok for postfix_expr at [42]..
+ue ok
+[136] Parsing ok for unary_expr at [42]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [138] Parsing FAILED for assignment_expr_op at [ - 12 + test]..
+----- [136] Parsing FAILED for paren_type at [42 - 12 + te]..
+----- [136] Parsing FAILED for exact_str at [42 - 12 + te]..
+----- [136] Parsing FAILED for exact_str at [42 - 12 + te]..
+????
+----- [136] Parsing FAILED for identifier_raw at [42 - 12 + te]..
+b4< 136
+----- [136] Parsing FAILED for hex_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for octal_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for binary_literal at [42 - 12 + te]..
+----- [136] Parsing FAILED for float_literal at [42 - 12 + te]..
+[136] Parsing ok for decimal_literal at [42]..
+after< 138
+parse ok :: 42
+[136] Parsing ok for literal at [42]..
+parse ok pe
+[136] Parsing ok for primary_expr at [42]..
+pf expr ok
+[136] Parsing ok for postfix_expr at [42]..
+ue ok
+[136] Parsing ok for cast_expr at [42]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+----- [138] Parsing FAILED for mult_expr_op at [ - 12 + test]..
+[136] Parsing ok for mult_expr at [42]..
+----- [139] Parsing FAILED for exact_str at [- 12 + test;]..
+[139] Parsing ok for exact_str at [-]..
+[138] Parsing ok for add_expr_op at [ -]..
+----- [141] Parsing FAILED for paren_type at [12 + test;}
+]..
+----- [141] Parsing FAILED for exact_str at [12 + test;}
+]..
+----- [141] Parsing FAILED for exact_str at [12 + test;}
+]..
+????
+----- [141] Parsing FAILED for identifier_raw at [12 + test;}
+]..
+b4< 141
+----- [141] Parsing FAILED for hex_literal at [12 + test;}
+]..
+----- [141] Parsing FAILED for octal_literal at [12 + test;}
+]..
+----- [141] Parsing FAILED for binary_literal at [12 + test;}
+]..
+----- [141] Parsing FAILED for float_literal at [12 + test;}
+]..
+[141] Parsing ok for decimal_literal at [12]..
+after< 143
+parse ok :: 12
+[141] Parsing ok for literal at [12]..
+parse ok pe
+[141] Parsing ok for primary_expr at [12]..
+pf expr ok
+[141] Parsing ok for postfix_expr at [12]..
+ue ok
+[141] Parsing ok for cast_expr at [12]..
+----- [144] Parsing FAILED for exact_str at [+ test;}
+
+in]..
+----- [144] Parsing FAILED for exact_str at [+ test;}
+
+in]..
+----- [144] Parsing FAILED for exact_str at [+ test;}
+
+in]..
+----- [143] Parsing FAILED for mult_expr_op at [ + test;}
+
+i]..
+[140] Parsing ok for mult_expr at [ 12]..
+[144] Parsing ok for exact_str at [+]..
+[143] Parsing ok for add_expr_op at [ +]..
+----- [146] Parsing FAILED for paren_type at [test;}
+
+int ]..
+----- [146] Parsing FAILED for exact_str at [test;}
+
+int ]..
+----- [146] Parsing FAILED for exact_str at [test;}
+
+int ]..
+????
+[146] Parsing ok for identifier_raw at [test]..
+parse ok pe
+[146] Parsing ok for primary_expr at [test]..
+pf expr ok
+[146] Parsing ok for postfix_expr at [test]..
+ue ok
+[146] Parsing ok for cast_expr at [test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for mult_expr_op at [;}
+
+int i;]..
+[145] Parsing ok for mult_expr at [ test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for add_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for add_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for shift_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for shift_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for relational_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for relational_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for equality_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for equality_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for and_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for and_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for xor_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for xor_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for or_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for or_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for logical_and_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for logical_and_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+----- [150] Parsing FAILED for logical_or_expr_op at [;}
+
+int i;]..
+[136] Parsing ok for logical_or_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+[136] Parsing ok for conditional_expr at [42 - 12 + test]..
+[136] Parsing ok for assignment_expr at [42 - 12 + test]..
+----- [150] Parsing FAILED for exact_str at [;}
+
+int i;]..
+[136] Parsing ok for expr at [42 - 12 + test]..
+[150] Parsing ok for exact_str at [;]..
+[131] Parsing ok for statement at [
+    42 - 12 + test;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+????
+----- [151] Parsing FAILED for identifier_raw at [}
+
+int i;]..
+b4< 151
+----- [151] Parsing FAILED for hex_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for octal_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for binary_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for float_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for decimal_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for char_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for string_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for pexpr at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for message at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for encode at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for identifier at [}
+
+int i;]..
+----- [151] Parsing FAILED for selector at [}
+
+int i;]..
+parse ok pe
+----- [151] Parsing FAILED for primary_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for postfix_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for unary_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for paren_type at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+????
+----- [151] Parsing FAILED for identifier_raw at [}
+
+int i;]..
+b4< 151
+----- [151] Parsing FAILED for hex_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for octal_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for binary_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for float_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for decimal_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for char_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for string_literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for literal at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for pexpr at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for message at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for encode at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for identifier at [}
+
+int i;]..
+----- [151] Parsing FAILED for selector at [}
+
+int i;]..
+parse ok pe
+----- [151] Parsing FAILED for primary_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for postfix_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for cast_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for mult_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for add_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for shift_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for relational_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for equality_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for and_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for xor_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for or_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for logical_and_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for logical_or_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for exact_str at [}
+
+int i;]..
+----- [151] Parsing FAILED for conditional_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for assignment_expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for expr at [}
+
+int i;]..
+----- [151] Parsing FAILED for statement at [}
+
+int i;]..
+[151] Parsing ok for exact_str at [}]..
+[86] Parsing ok for compound_statement at [
+
+{
+    YOYO = OK;
+    int x = 5;
+    f = 42;
+    42 - 12 + test;}]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [152] Parsing FAILED for interface at [
+
+int i;]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [152] Parsing FAILED for implementation at [
+
+int i;]..
+.. [int i;]!
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [152] Parsing FAILED for compound_statement at [
+
+int i;]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [153] Parsing FAILED for interface at [
+int i;]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [153] Parsing FAILED for implementation at [
+int i;]..
+.. [int i;]!
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [153] Parsing FAILED for compound_statement at [
+int i;]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [154] Parsing FAILED for interface at [int i;]..
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [154] Parsing FAILED for implementation at [int i;]..
+.. [int i;]!
+----- [154] Parsing FAILED for exact_str at [int i;]..
+----- [154] Parsing FAILED for compound_statement at [int i;]..
+----- [155] Parsing FAILED for exact_str at [nt i;]..
+----- [155] Parsing FAILED for interface at [nt i;]..
+----- [155] Parsing FAILED for exact_str at [nt i;]..
+----- [155] Parsing FAILED for implementation at [nt i;]..
+.. [nt i;]!
+----- [155] Parsing FAILED for exact_str at [nt i;]..
+----- [155] Parsing FAILED for compound_statement at [nt i;]..
+----- [156] Parsing FAILED for exact_str at [t i;]..
+----- [156] Parsing FAILED for interface at [t i;]..
+----- [156] Parsing FAILED for exact_str at [t i;]..
+----- [156] Parsing FAILED for implementation at [t i;]..
+.. [t i;]!
+----- [156] Parsing FAILED for exact_str at [t i;]..
+----- [156] Parsing FAILED for compound_statement at [t i;]..
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [157] Parsing FAILED for interface at [ i;]..
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [157] Parsing FAILED for implementation at [ i;]..
+.. [i;]!
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [157] Parsing FAILED for compound_statement at [ i;]..
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [158] Parsing FAILED for interface at [i;]..
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [158] Parsing FAILED for implementation at [i;]..
+.. [i;]!
+----- [158] Parsing FAILED for exact_str at [i;]..
+----- [158] Parsing FAILED for compound_statement at [i;]..
+----- [159] Parsing FAILED for exact_str at [;]..
+----- [159] Parsing FAILED for interface at [;]..
+----- [159] Parsing FAILED for exact_str at [;]..
+----- [159] Parsing FAILED for implementation at [;]..
+.. [;]!
+----- [159] Parsing FAILED for exact_str at [;]..
+----- [159] Parsing FAILED for compound_statement at [;]..
+top_level (4)
+dumping raw...
+  raw: 'test'
+  interface: name=name superclass=(null)
+  ivars:
+  methods (2):
+    method: type=+ return_type=void keyword_arg_count=1
+      keyword_arg: keyword=hello type=(null) name=(null)
+    method: type=+ return_type=void keyword_arg_count=1
+      keyword_arg: keyword=helloWith type=int name=a
+  compound_statement (5 statements)
+____________
+    statement: expr
+      expr (1)
+        binop_expr: op==
+          left=dumping raw...
+            raw: 'YOYO'
+          right=dumping raw...
+            raw: 'OK'
+____________
+    statement: raw
+dumping raw...
+      raw: '
+    int'
+____________
+    statement: expr
+      expr (1)
+        binop_expr: op==
+          left=dumping raw...
+            raw: 'x'
+          right=dumping raw...
+            raw: '5'
+____________
+    statement: expr
+      expr (1)
+        binop_expr: op==
+          left=dumping raw...
+            raw: 'f'
+          right=dumping raw...
+            raw: '42'
+____________
+    statement: expr
+      expr (1)
+        binop_expr: op=+
+          left=            binop_expr: op=-
+              left=dumping raw...
+                raw: '42'
+              right=dumping raw...
+                raw: '12'
+          right=dumping raw...
+            raw: 'test'
+dumping raw...
+  raw: '
+
+int i;'

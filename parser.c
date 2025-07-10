@@ -9,6 +9,8 @@
 #include <ctype.h>
 
 #include "./_strdup.h"
+#include "libobjc/include/objc/objc.h"
+#include "visitors/dumper.h"
 
 //////////////////////////////////////////////////////////
 //////////////  CONTEXT                        ///////////
@@ -22,32 +24,52 @@ struct parser_ctx_state {
 static parser_ctx_state save_ctx_state(parser_ctx *ctx) {
     return (parser_ctx_state) {
         .pos = ctx->pos,
-        .depth = ctx->depth + 1
     };
 }
 
 static void restore_ctx_state(parser_ctx *ctx, parser_ctx_state state) {
     ctx->pos = state.pos;
-    ctx->depth = state.depth - 1;
 }
 
 //////////////////////////////////////////////////////////
 //////////////  HELPERS                        ///////////
 //////////////////////////////////////////////////////////
+static int skip_comments(parser_ctx *ctx);
 
-static void skip_whitespace(parser_ctx *ctx) {
-    while (isspace(ctx->input[ctx->pos])) 
-        ctx->pos++;
+static int skip_comments(parser_ctx *ctx) {
+    while (1) {
+        while (isspace(ctx->input[ctx->pos]))
+            ctx->pos++;
+        if (ctx->input[ctx->pos] == '/' && ctx->input[ctx->pos + 1] == '/') {
+            ctx->pos += 2;
+            while (ctx->input[ctx->pos] && ctx->input[ctx->pos] != '\n')
+                ctx->pos++;
+            continue;
+        }
+        if (ctx->input[ctx->pos] == '/' && ctx->input[ctx->pos + 1] == '*') {
+            ctx->pos += 2;
+            while (ctx->input[ctx->pos] && !(ctx->input[ctx->pos] == '*' && ctx->input[ctx->pos + 1] == '/')) {
+                ctx->pos++;
+            }
+            if (ctx->input[ctx->pos] == '*' && ctx->input[ctx->pos + 1] == '/')
+                ctx->pos += 2;
+            else
+                break;
+            continue;
+        }
+        break;
+    }
+    return 1;
 }
 
-static void parse_skip_whitespace(parser_ctx *ctx) {
-    return skip_whitespace(ctx);
-}
+
+//static void parse_skip_whitespace(parser_ctx *ctx) {
+//    return skip_whitespace(ctx);
+//}
 
 //////
 
 static char *exact_str(parser_ctx *ctx, char *what) {
-    skip_whitespace(ctx);
     if (what) {
         size_t len = strlen(what);
         if (strncmp(ctx->input + ctx->pos, what, len) == 0) {
@@ -63,21 +85,72 @@ static char *parse_exact_str(parser_ctx *ctx, char *what) {
     return exact_str(ctx, what);
 }
 
+int find_closing_paren_len(const char *s) {
+    if (!s || s[0] != '(') return -1;  // Must start with '('
+
+    int paren_level = 1;    // We start inside one '('
+    int bracket_level = 0;  // Track nesting of '[' and ']'
+
+    for (int i = 1; s[i] != '\0'; i++) {
+        char c = s[i];
+
+        if (c == '{' || c == '}') {
+            // Error on curly braces
+            return -1;
+        }
+
+        if (c == '[') {
+            bracket_level++;
+        } else if (c == ']') {
+            if (bracket_level == 0) {
+                // Unmatched closing bracket, treat as error or ignore?
+                // Here, let's treat as error:
+                return -1;
+            }
+            bracket_level--;
+        } else if (c == '(') {
+            if (bracket_level == 0) {
+                paren_level++;
+            }
+            // If inside brackets, '(' is just a char, no paren count
+        } else if (c == ')') {
+            if (bracket_level == 0) {
+                paren_level--;
+                if (paren_level == 0) {
+                    // Found the matching closing ')', return length including it
+                    return i + 1;
+                }
+            }
+            // If inside brackets, ')' is just a char
+        }
+        // Other chars are ignored, just keep scanning
+    }
+
+    // If we finish the loop and paren_level != 0, no matching closing paren found
+    return -1;
+}
+
+
 //////////////////////////////////////////////////////////
 //////////////  BACKTRACKING                   ///////////
 //////////////////////////////////////////////////////////
 
+static void* do2(int a, void *b)
+{
+    (void) a;
+    return b;
+}
+
 // --- try_parse macro and helper ---
 #define try_parse(ptr, ctx, parser, ...) \
-    _try_parse(#parser, ctx, save_ctx_state(ctx), parse_ ## parser(ctx __VA_ARGS__), (void**)ptr)
+    _try_parse(#parser, ctx, save_ctx_state(ctx), do2(skip_comments(ctx), parse_ ## parser(ctx __VA_ARGS__)), (void**)ptr)
 
 static void *_try_parse(char *name, parser_ctx *ctx, parser_ctx_state state, void *result, void **ptr) {
-    skip_whitespace(ctx);
     if (!result) {
+        printf("----- [%zu] Parsing FAILED for %s at [%.12s]..\n", state.pos, name, ctx->input + state.pos);
         restore_ctx_state(ctx, state);
-        printf("[%li] Parsing failed for %s [%.15s]\n", ctx->depth, name, ctx->input + ctx->pos);
     } else {
-        printf("[%li] Parsing ok for %s [%.15s]\n",ctx->depth, name, ctx->input + ctx->pos);
+        printf("[%zu] Parsing ok for %s at [%.*s]..\n", state.pos, name, (int)(ctx->pos - state.pos), ctx->input + state.pos);
     }
     if(ptr)
         *ptr = result;
@@ -94,13 +167,13 @@ static void *_try_parse(char *name, parser_ctx *ctx, parser_ctx_state state, voi
         ast  *current;                                        \
         while ((current = try_parse(0, ctx, parser __VA_ARGS__)))\
         {                                                     \
-            *args = current;                                  \
             args ## _count += 1;                              \
             args = realloc(args, args ## _count * sizeof(void*)); \
+            args[args ## _count - 1] = current;               \
         }                                                     \
     }                                                         \
-    if ( args ## _count >= min &&  args ## _count <= max)     \
-    args ## _success = 1;                                     \
+    if (args ## _count >= min &&  (max == -1 || args ## _count <= max))     \
+        args ## _success = 1;                                 \
     else                                                      \
         restore_ctx_state(ctx, state);
 
@@ -111,20 +184,28 @@ static void *_try_parse(char *name, parser_ctx *ctx, parser_ctx_state state, voi
 //////////////////////////////////////////////////////////
 
 char *parse_identifier(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos < ctx->length && (isalpha(ctx->input[ctx->pos]) || ctx->input[ctx->pos] == '_')) {
         ctx->pos++;
         while (ctx->pos < ctx->length && (isalnum(ctx->input[ctx->pos]) || ctx->input[ctx->pos] == '_')) {
             ctx->pos++;
         }
-        return strndup(ctx->input + start, ctx->pos - start);
+       return strndup(ctx->input + start, ctx->pos - start) ;
     }
     return NULL;
 }
 
+raw *parse_identifier_raw(parser_ctx *ctx) {
+    char *s = parse_identifier(ctx);
+    if (!s)
+        return NULL;
+    make_ast(raw, output, {
+        .source = s
+    });
+    return output;
+}
+
 char *parse_hex_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos + 2 < ctx->length && ctx->input[ctx->pos] == '0' && (ctx->input[ctx->pos+1] == 'x' || ctx->input[ctx->pos+1] == 'X')) {
         ctx->pos += 2;
@@ -142,7 +223,6 @@ char *parse_hex_literal(parser_ctx *ctx) {
 }
 
 char *parse_octal_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '0') {
         ctx->pos++;
@@ -160,7 +240,6 @@ char *parse_octal_literal(parser_ctx *ctx) {
 }
 
 char *parse_binary_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos + 2 < ctx->length && ctx->input[ctx->pos] == '0' && (ctx->input[ctx->pos+1] == 'b' || ctx->input[ctx->pos+1] == 'B')) {
         ctx->pos += 2;
@@ -178,7 +257,6 @@ char *parse_binary_literal(parser_ctx *ctx) {
 }
 
 char *parse_decimal_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos < ctx->length && ctx->input[ctx->pos] >= '1' && ctx->input[ctx->pos] <= '9') {
         ctx->pos++;
@@ -191,7 +269,6 @@ char *parse_decimal_literal(parser_ctx *ctx) {
 }
 
 char *parse_float_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     size_t p = ctx->pos;
     int saw_digit = 0, saw_dot = 0, saw_exp = 0;
@@ -217,7 +294,6 @@ char *parse_float_literal(parser_ctx *ctx) {
 }
 
 char *parse_char_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '\'') {
         ctx->pos++;
@@ -237,14 +313,13 @@ char *parse_char_literal(parser_ctx *ctx) {
 }
 
 char *parse_string_literal(parser_ctx *ctx) {
-    skip_whitespace(ctx);
     size_t start = ctx->pos;
     //if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '@')  ctx->pos++;
     if (ctx->pos < ctx->length && ctx->input[ctx->pos] == '"') {
         ctx->pos++;
         while (ctx->pos < ctx->length) {
             if (ctx->input[ctx->pos] == '\\') {
-                ctx->pos += 2;
+                ctx->pos += 1; // todo:: check how many //
             } else if (ctx->input[ctx->pos] == '"') {
                 ctx->pos++;
                 return strndup(ctx->input + start, ctx->pos - start);
@@ -257,60 +332,65 @@ char *parse_string_literal(parser_ctx *ctx) {
     return NULL;
 }
 
+
+char *parse_paren_type(parser_ctx *ctx) {
+    int closing = find_closing_paren_len(ctx->input + ctx->pos);
+    if (closing == -1) 
+        return NULL;
+    char *output = strndup(ctx->input + ctx->pos + 1, closing - 2);
+    ctx->pos += closing;
+    return (char*) output;
+}
+
 //////////////////////////////////////////////////////////
 //////////////  PARSERS                        ///////////
 //////////////////////////////////////////////////////////
 
-statement *parse_statement(parser_ctx *ctx)
-{
-    expr *e_val = try_parse(0, ctx, expr);
-    if (e_val) {
-        make_ast(statement, output, {
-            .statement_type = is_expr,
-            .e_val = e_val
-        });
-        return output;
-    }
-    const char *base = ctx->input;
-    while (!(e_val = try_parse(0, ctx, expr)) && ctx->input[ctx->pos]) {
-        if (ctx->input[ctx->pos + 1] == '}')
-            break ;
-        ctx->pos += 1;
-    }
-    if (e_val) {
-        make_ast(statement, output, {
-            .statement_type = is_expr,
-            .e_val = e_val
-        })
-        return output;
-    }
-    make_ast(raw, r_val, {
-        .source = strndup(base, (ctx->input + ctx->pos) - base)
-    });
-    make_ast(statement, output, {
-        .statement_type = is_raw,
-        .r_val = r_val
-    })
-    return output;
-};
 
-compound_statement* parse_compound_statement(parser_ctx *ctx)
+encode *parse_encode(parser_ctx *ctx)
 {
-    if (!try_parse(0, ctx, exact_str,, "{"))
-        return NULL;
-    try_parse_all(ctx, statement, statements, 0, -1);
-    if (!statements_success)
-        return NULL;
-    if (!try_parse(0, ctx, exact_str,, "}"))
+    char *ostr = NULL;
+    if (try_parse(0, ctx, exact_str,, "@encode")
+    && try_parse(&ostr, ctx, paren_type))
     {
-        free(statements);
-        return NULL;
+        make_ast(encode, onode, {
+            .type = ostr
+        })
+        return onode;
     }
-    make_ast(compound_statement, output, {
-        .statements = (ast**) statements,
-        .statements_count = statements_count,
+    return NULL;
+}
+
+selector *parse_selector(parser_ctx *ctx)
+{
+    try_parse(0, ctx, exact_str,, "@selector");
+    try_parse(0, ctx, exact_str,, "(");
+    char *output = malloc(1);
+    *output = 0;
+    char *kw;
+    if (!try_parse(&kw, ctx, identifier))
+        return NULL;
+    output = realloc(output, strlen(kw) + 2);
+    strcpy(output, kw);
+    if (try_parse(0, ctx, exact_str,, ":"))
+    {
+        strcat(output, ":");
+        while (1) {
+            if (try_parse(&kw, ctx, identifier) 
+                && try_parse(0, ctx, exact_str,, ":"))
+            {
+                output = realloc(output, strlen(output) + strlen(kw) + 1);
+                strcat(output, kw);       
+            }
+        }
+    }
+    if (!try_parse(0, ctx, exact_str,, ")"))
+        return NULL;
+
+    make_ast(selector, output_expr, {
+        .str = _strdup(output)
     });
-    return output;
+    return output_expr;
 }
 
 keyword_arg *parse_keyword_arg(parser_ctx *ctx) {
@@ -319,12 +399,10 @@ keyword_arg *parse_keyword_arg(parser_ctx *ctx) {
     char *name = NULL;
 
     if (!
-        try_parse(&keyword, ctx, identifier)
+        (try_parse(&keyword, ctx, identifier)
         && try_parse(0, ctx, exact_str,, ":")
-        && try_parse(0, ctx, exact_str,, "(") 
-        && try_parse(&type, ctx, type)
-        && try_parse(0, ctx, exact_str,, ")")
-        && try_parse(&name, ctx, identifier)
+        && try_parse(&type, ctx, paren_type)
+        && try_parse(&name, ctx, identifier))
     ) {
         free(keyword);
         free(type);
@@ -349,9 +427,8 @@ method *parse_method_common(parser_ctx *ctx) {
         method_type = member_method;
     else 
         return NULL;
-    if (!(try_parse(0, ctx, exact_str,, "(")
-        && (return_type = try_parse(0, ctx, type))
-        && try_parse(0, ctx, exact_str,, ")")))
+    return_type = try_parse(0, ctx, paren_type);
+    if (!return_type)
     { 
         free(return_type); 
         return NULL; 
@@ -412,6 +489,7 @@ method *parse_method_impl(parser_ctx *ctx)
 }
 
 interface *parse_interface(parser_ctx *ctx) {
+
     if (!try_parse(0, ctx, exact_str,, "@interface"))
         return NULL;
     char *name =  try_parse(0, ctx, identifier);
@@ -425,14 +503,21 @@ interface *parse_interface(parser_ctx *ctx) {
             return NULL;
         }
     }
+    printf("begin.\n");
     compound_statement *ivars = try_parse(0, ctx, compound_statement);
-    try_parse_all(ctx, method_proto, methods, 1, -1);
+    printf("%p.\n", ivars);
+
+    try_parse_all(ctx, method_proto, methods, 0, -1);
+    printf("???");
     if (!methods_success) {
         free (name);
         free(superclass_name);
         // todo: delete visitor to delete ivars
         return NULL;
     }
+    printf("ok!");
+    if (!try_parse(0, ctx, exact_str,, "@end"))
+        return NULL;
     make_ast(interface, var, {
         .name = name,
         .superclass_name = superclass_name,
@@ -525,162 +610,683 @@ message *parse_message(parser_ctx *ctx) {
 }
 
 top_level *parse_top_level(parser_ctx *ctx) {
-    make_ast(top_level, output, {.childs = malloc(sizeof(void*)), .size = 0});
+    make_ast(top_level, output, {
+        .childs = malloc(sizeof(void*)), 
+        .size   = 0
+    });
+
     const char *start_raw = NULL;
+
     while (ctx->pos < ctx->length) {
-        ast *node = NULL;
-        node = NULL;
-        if (try_parse(&node, ctx, interface) || try_parse(&node, ctx, implementation) || try_parse(&node, ctx, expr)) {
-            if (start_raw)
-            {
+        ast     *node        = NULL;
+        size_t   parse_start = ctx->pos;           // ← remember where parsing would begin
+
+        if ( try_parse(&node, ctx, interface)
+          || try_parse(&node, ctx, implementation)
+          || try_parse(&node, ctx, compound_statement)
+        ) {
+            // 1) first, flush any raw text *up to* parse_start, not ctx->pos
+            if (start_raw) {
+                size_t raw_len = (start_raw - ctx->input)
+                               ? parse_start - (start_raw - ctx->input)
+                               : parse_start - (start_raw - ctx->input);
                 make_ast(raw, r_node, {
-                    .source = strndup(start_raw, ctx->input + ctx->pos - start_raw)
+                    .source = strndup(start_raw, raw_len)
                 });
-                output->size += 1;
-                output->childs = realloc(output->childs, output->size * sizeof(ast*));
-                output->childs[output->size] = (ast*) r_node;
+                output->childs = realloc(output->childs,
+                                         (output->size + 1) * sizeof(ast*));
+                output->childs[output->size++] = (ast*)r_node;
+                start_raw = NULL;
+
             }
-            output->size += 1;
-            output->childs = realloc(output->childs, output->size * sizeof(ast*));
-            output->childs[output->size] = node;
-            start_raw = NULL;
-        } else {
+
+            // 2) then insert the just‑parsed AST node
+            output->childs = realloc(output->childs,
+                                     (output->size + 1) * sizeof(ast*));
+            output->childs[output->size++] = node;
+
+
+        }
+        else {
+            // we’re in a raw zone; mark its start if needed
             if (!start_raw)
-                start_raw = ctx->input;
+                start_raw = ctx->input + ctx->pos;
             ctx->pos += 1;
         }
     }
+
+    // flush any trailing raw text
     if (start_raw) {
+        size_t raw_len = ctx->input + ctx->pos - start_raw;
         make_ast(raw, r_node, {
-            .source = strndup(start_raw, ctx->input + ctx->pos - start_raw)
+            .source = strndup(start_raw, raw_len)
         });
-        output->size += 1;
-        output->childs = realloc(output->childs, output->size * sizeof(ast*));
-        output->childs[output->size] = (ast*) r_node;
+        output->childs = realloc(output->childs,
+                                 (output->size + 1) * sizeof(ast*));
+        output->childs[output->size++] = (ast*)r_node;
+    }
+
+    return output;
+}
+
+statement *parse_statement(parser_ctx *ctx)
+{
+    if (try_parse(0, ctx, exact_str,, "{")) {
+        ctx->pos -= 1;
+        make_ast(statement, output, {
+            .statement_type = is_cp,
+            .cp_val = parse_compound_statement(ctx)
+        })
+        return output;
+    }
+    expr *e_val = try_parse(0, ctx, expr);
+    if (e_val && try_parse(0, ctx, exact_str,, ";")) {
+        make_ast(statement, output, {
+            .statement_type = is_expr,
+            .e_val = e_val
+        });
+        return output;
+    }
+    return NULL;
+};
+
+static inline void    cp_flush(parser_ctx *ctx, compound_statement *pc, const char **ptr, size_t end_pos)
+{
+    if (!*ptr || ctx->pos >= ctx->length)
+        return;
+    make_ast(raw, rnode, {
+        .source = _strndup(*ptr, ctx->input + end_pos - *ptr)
+    })
+    make_ast(statement, output, {
+        .statement_type = is_raw,
+        .r_val = rnode
+    })
+    pc->statements_count += 1;
+    pc->statements = realloc(pc->statements, pc->statements_count * sizeof(void*));
+    pc->statements[pc->statements_count - 1] = output;
+    *ptr = NULL;
+}
+
+compound_statement* parse_compound_statement(parser_ctx *ctx)
+{
+    printf(".. [%.10s]!\n", ctx->input + ctx->pos);
+    if (!try_parse(0, ctx, exact_str,, "{"))
+        return NULL;
+    make_ast(compound_statement, output, {
+        .statements = (void*) malloc(sizeof(void*)),
+        .statements_count = 0,
+    });
+    const char *start = NULL;
+    while (ctx->input[ctx->pos])
+    {
+        statement *stmt;
+        size_t end_pos = ctx->pos;
+        if (try_parse(&stmt, ctx, statement))
+        {
+             cp_flush(ctx, output, &start, end_pos);
+             output->statements_count += 1;
+             output->statements = realloc(output->statements, output->statements_count * sizeof(void*));
+             output->statements[output->statements_count - 1] = (void*) stmt;
+             
+        } else if (try_parse(0, ctx, exact_str,, "}")) {
+            cp_flush(ctx, output, &start, end_pos);
+            return output;
+        } else {
+            if (!start)
+                start = ctx->input + ctx->pos;
+            ctx->pos += 1;
+        }
+    }
+    cp_flush(ctx, output, &start, ctx->pos);
+    return output;
+}
+
+ast *parse_literal(parser_ctx *ctx) {
+    char *lit;
+    printf("b4< %zu\n", ctx->pos);
+    try_parse(&lit, ctx, hex_literal)
+    || try_parse(&lit, ctx, octal_literal)
+    || try_parse(&lit, ctx, binary_literal)
+    || try_parse(&lit, ctx, float_literal)
+    || try_parse(&lit, ctx, decimal_literal)
+    || try_parse(&lit, ctx, char_literal)
+    || try_parse(&lit, ctx, string_literal) ;
+    if (!lit)
+        return NULL;
+    make_ast(raw, output, {
+        .source = lit
+    });
+    printf("after< %zu\n", ctx->pos);
+    printf("parse ok :: %s\n", lit);
+    return (ast*)output;
+}
+
+//// C EXPR
+
+/*
+castExpression
+    : (LP typeName RP) castExpression
+    | unaryExpression
+    ;
+*/
+
+ast *parse_cast_expr(parser_ctx *ctx) {
+    
+    char *ptype = try_parse(0, ctx, paren_type);
+    if (!ptype)
+        return parse_unary_expr(ctx);
+    make_ast(cast_expr, output, {
+        .type = ptype,
+        .expr = try_parse(0, ctx, cast_expr)
+    })
+    if (ptype && output->expr)
+        return (ast*) output;
+    else 
+        return NULL;
+   
+
+};
+
+///////////////////////
+
+# define declare_left_reccursive_rule(name, operands_parser)\
+ast *parse_ ## name (parser_ctx *ctx)                   \
+{                                                       \
+    ast *left = NULL;                                   \
+    ast *right = NULL;                                  \
+    if (!try_parse(&left, ctx, operands_parser))        \
+        return NULL;                                    \
+    while (1)                                           \
+    {                                                   \
+        char *op = NULL;                                \
+        if (!try_parse(&op, ctx, name ## _op))          \
+        {                                               \
+            break;                                      \
+        }                                               \
+        if (!try_parse(&right, ctx, operands_parser))   \
+            return NULL;                                \
+        make_ast(binop_expr, bin, {                     \
+            .op = op,                                   \
+            .left = left,                               \
+            .right = right                              \
+        });                                             \
+        left = (ast*) bin;                              \
+    }                                                   \
+    return left;                                        \
+}
+
+///////////////////////
+
+/***********************************************************************
+multiplicativeExpression
+    : castExpression (('*' | '/' | '%') castExpression)*
+    ;
+
+*/
+
+char *parse_mult_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "*")
+    || try_parse(&op, ctx, exact_str,, "/")
+    || try_parse(&op, ctx, exact_str,, "%"));
+    return op;
+}
+declare_left_reccursive_rule(mult_expr, cast_expr)
+
+/***********************************************************************
+additiveExpression
+    : multiplicativeExpression (('+' | '-') multiplicativeExpression)*
+    ;
+
+*/
+char *parse_add_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "+")
+    || try_parse(&op, ctx, exact_str,, "-"));
+    return op;
+}
+declare_left_reccursive_rule(add_expr, mult_expr)
+
+/***********************************************************************
+shiftExpression
+    : additiveExpression ((leftShiftOperator | rightShiftOperator) additiveExpression)*
+    ;
+
+leftShiftOperator
+    : LT LT
+    ;
+    
+rightShiftOperator
+    : GT GT
+    ;
+*/
+
+char *parse_shift_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "<<")
+    || try_parse(&op, ctx, exact_str,, ">>"));
+    return op;
+}
+declare_left_reccursive_rule(shift_expr, add_expr)
+
+/***********************************************************************
+relationalExpression
+    : shiftExpression ((LT | GT | LE | GE) shiftExpression)*
+    ;
+
+*/
+char *parse_relational_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "<")
+    || try_parse(&op, ctx, exact_str,, ">")
+    || try_parse(&op, ctx, exact_str,, "<=")
+    || try_parse(&op, ctx, exact_str,, ">="));
+    return op;
+}
+declare_left_reccursive_rule(relational_expr, shift_expr)
+
+/***********************************************************************
+equalityExpression
+    : relationalExpression ((EQUAL | NOTEQUAL) relationalExpression)*
+    ;
+*/
+
+char *parse_equality_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "==")
+    || try_parse(&op, ctx, exact_str,, "!="));
+    return op;
+}
+declare_left_reccursive_rule(equality_expr, relational_expr)
+
+/***********************************************************************
+andExpression
+    : equalityExpression (BITAND equalityExpression)*
+    ;
+*/
+char *parse_and_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "&"));
+    return op;
+}
+declare_left_reccursive_rule(and_expr, equality_expr)
+
+/***********************************************************************
+exclusiveOrExpression
+    : andExpression (BITXOR andExpression)*
+    ;
+*/
+char *parse_xor_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "^"));
+    return op;
+}
+declare_left_reccursive_rule(xor_expr, and_expr)
+
+/***********************************************************************
+inclusiveOrExpression
+    : exclusiveOrExpression (BITOR exclusiveOrExpression)*
+    ;
+*/
+char *parse_or_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "|"));
+    return op;
+}
+declare_left_reccursive_rule(or_expr, xor_expr)
+
+/***********************************************************************
+logicalAndExpression
+    : inclusiveOrExpression (AND inclusiveOrExpression)*
+    ;
+*/
+char *parse_logical_and_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "&&"));
+    return op;
+}
+declare_left_reccursive_rule(logical_and_expr, or_expr)
+
+/***********************************************************************
+logicalOrExpression
+    : logicalAndExpression (OR logicalAndExpression)*
+    ;
+*/
+char *parse_logical_or_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    (try_parse(&op, ctx, exact_str,, "||"));
+    return op;
+}
+declare_left_reccursive_rule(logical_or_expr, logical_and_expr)
+
+/***********************************************************************
+conditionalExpression
+    : logicalOrExpression ('?' ifExpr = conditionalExpression ':' elseExpr = conditionalExpression)?
+    ;
+*/
+ast *parse_conditional_expr(parser_ctx *ctx) {
+    ast *e = try_parse(0, ctx, logical_or_expr);
+    if (!try_parse(0, ctx, exact_str,, "?"))
+        return e;
+    ast *ifExpr = try_parse(0, ctx, conditional_expr);
+    if (!ifExpr)
+        return NULL;
+    if (!try_parse(0, ctx, exact_str,, ":"))
+        return NULL;
+    ast *elseExpr = try_parse(0, ctx, conditional_expr);
+    if (!elseExpr)
+        return NULL;
+    make_ast(conditional_expr, output, {
+        .test = e,
+        .consequent = ifExpr,
+        .alternate = elseExpr
+    });
+    return (ast*) output;
+}
+
+/***********************************************************************
+assignmentExpression
+    : conditionalExpression
+    | unaryExpression assignmentOperator assignmentExpression
+    ;
+*/
+char *parse_assignment_expr_op(parser_ctx *ctx);
+
+ast *parse_assignment_expr(parser_ctx *ctx)
+{
+    parser_ctx_state ctx_bkp = save_ctx_state(ctx);
+    ast *left = try_parse(0, ctx, unary_expr);
+    if (left) {
+        char *op = try_parse(0, ctx, assignment_expr_op);
+        if (op) {
+            ast *right = try_parse(0, ctx, assignment_expr);
+            if (right) {
+                make_ast(binop_expr, output, {
+                    .op    = op,
+                    .left  = left,
+                    .right = right
+                });
+                return (ast *)output;
+            }
+            return NULL;
+        }
+        restore_ctx_state(ctx, ctx_bkp);
+    }
+    return try_parse(0, ctx, conditional_expr);
+}
+/*
+ast *parse_assignment_expr(parser_ctx *ctx)
+{
+    ast *left;
+    char *op;
+    ast *right;
+
+    
+    left = try_parse(0, ctx, conditional_expr);
+    if (left)
+        return left;
+    left = try_parse(0, ctx, unary_expr);
+    if (left) {
+        op = try_parse(0, ctx, assignment_expr_op);
+        if (op) {
+            right = try_parse(0, ctx, assignment_expr);
+            if (right) {
+                make_ast(binop_expr, output, {
+                    .op    = op,
+                    .left  = left,
+                    .right = right
+                });
+                return (ast *)output;
+            }
+        } 
+    }   
+    return NULL;
+}*/
+
+/***********************************************************************
+assignmentOperator
+    : '='
+    | '*='
+    | '/='
+    | '%='
+    | '+='
+    | '-='
+    | '<<='
+    | '>>='
+    | '&='
+    | '^='
+    | '|='
+    ;
+*/
+
+char *parse_assignment_expr_op(parser_ctx *ctx) {
+    char *op = NULL;
+    try_parse(&op, ctx, exact_str,, "=")
+    || try_parse(&op, ctx, exact_str,, "*=")
+    || try_parse(&op, ctx, exact_str,, "/=")
+    || try_parse(&op, ctx, exact_str,, "%=")
+    || try_parse(&op, ctx, exact_str,, "+=")
+    || try_parse(&op, ctx, exact_str,, "-=")
+    || try_parse(&op, ctx, exact_str,, "<<=")
+    || try_parse(&op, ctx, exact_str,, ">>=")
+    || try_parse(&op, ctx, exact_str,, "&=")
+    || try_parse(&op, ctx, exact_str,, "^=")
+    || try_parse(&op, ctx, exact_str,, "|=")
+    ;
+    return op;
+}
+
+/***********************************************************************
+expression
+    : assignmentExpression (',' assignmentExpression)*
+    ;
+*/
+expr *parse_expr(parser_ctx *ctx) {
+    make_ast(expr, output, {
+        .exprs_count = 0
+    });
+    ast *binop = try_parse(0, ctx, assignment_expr);
+    if (!binop)
+        return NULL;
+    output->exprs_count = 1;
+    output->exprs = malloc(sizeof(void*));
+    *(output->exprs) = (ast*)binop;
+    while (try_parse(0, ctx, exact_str,, ",")) {
+        binop = try_parse(0, ctx, assignment_expr);
+        if (!binop)
+            break;
+        output->exprs = realloc(output->exprs, output->exprs_count + 1);
+        output->exprs[output->exprs_count] = binop;
+        output->exprs_count += 1;
     }
     return output;
 }
 
-// Top-level expression parser
-expr *parse_expr(parser_ctx *ctx) {
-    return parse_assignment_expr(ctx);
-}
 
-expr *parse_assignment_expr(parser_ctx *ctx) {
-    // TODO: implement assignment parsing
-    return parse_conditional_expr(ctx);
-}
+/***********************************************************************
+unaryExpression
+    : ('++' | '--')* (
+        postfixExpression
+        | unaryOperator castExpression
+        | ('sizeof' | '_Alignof') LP typeName RP
+    )
+    ;
 
-expr *parse_conditional_expr(parser_ctx *ctx) {
-    // TODO: implement conditional parsing
-    return parse_logical_or_expr(ctx);
-}
+unaryOperator
+    : '&'
+    | '*'
+    | '+'
+    | '-'
+    | '~'
+    | BANG
+    ;
+*/
 
-expr *parse_logical_or_expr(parser_ctx *ctx) {
-    // TODO: implement logical or parsing
-    return parse_logical_and_expr(ctx);
-}
-
-expr *parse_logical_and_expr(parser_ctx *ctx) {
-    // TODO: implement logical and parsing
-    return parse_inclusive_or_expr(ctx);
-}
-
-expr *parse_inclusive_or_expr(parser_ctx *ctx) {
-    // TODO: implement inclusive or parsing
-    return parse_exclusive_or_expr(ctx);
-}
-
-expr *parse_exclusive_or_expr(parser_ctx *ctx) {
-    // TODO: implement exclusive or parsing
-    return parse_and_expr(ctx);
-}
-
-expr *parse_and_expr(parser_ctx *ctx) {
-    // TODO: implement and parsing
-    return parse_equality_expr(ctx);
-}
-
-expr *parse_equality_expr(parser_ctx *ctx) {
-    // TODO: implement equality parsing
-    return parse_relational_expr(ctx);
-}
-
-expr *parse_relational_expr(parser_ctx *ctx) {
-    // TODO: implement relational parsing
-    return parse_shift_expr(ctx);
-}
-
-expr *parse_shift_expr(parser_ctx *ctx) {
-    // TODO: implement shift parsing
-    return parse_additive_expr(ctx);
-}
-
-expr *parse_additive_expr(parser_ctx *ctx) {
-    expr *left = parse_multiplicative_expr(ctx);
-    if (!left) return NULL;
-    while (1) {
-        skip_whitespace(ctx);
-        char op = 0;
-        if (ctx->input[ctx->pos] == '+') op = '+';
-        else if (ctx->input[ctx->pos] == '-') op = '-';
-        else break;
-        ctx->pos++;
-        expr *right = parse_multiplicative_expr(ctx);
-        if (!right) break;
-        make_ast(binop_expr, bin, {.left = (ast*)left, .op = (char[]){op, 0}, .right = (ast*)right});
-        left = (expr*)bin;
+ast *parse_unary_expr(parser_ctx *ctx) {
+    char *op = NULL;
+    if (try_parse(&op, ctx, exact_str,, "++")
+        || try_parse(&op, ctx, exact_str,, "--"))
+    {
+        make_ast(unary_op_expr, new_output, {});
+        new_output->op = op;
+        new_output->expr = parse_unary_expr(ctx);
+        if (!new_output->expr)
+            return NULL;
+        new_output->pos = unary_op_expr_prefix;
+        return (ast*)new_output;
     }
-    return left;
-}
-
-expr *parse_multiplicative_expr(parser_ctx *ctx) {
-    expr *left = parse_unary_expr(ctx);
-    if (!left) return NULL;
-    while (1) {
-        skip_whitespace(ctx);
-        char op = 0;
-        if (ctx->input[ctx->pos] == '*') op = '*';
-        else if (ctx->input[ctx->pos] == '/') op = '/';
-        else if (ctx->input[ctx->pos] == '%') op = '%';
-        else break;
-        ctx->pos++;
-        expr *right = parse_unary_expr(ctx);
-        if (!right) break;
-        make_ast(binop_expr, bin, {.left = (ast*)left, .op = (char[]){op, 0}, .right = (ast*)right});
-        left = (expr*)bin;
+    printf("????\n");
+    unary_op_expr *pf = try_parse(0, ctx, postfix_expr);
+    if (pf)
+    {
+        printf("ue ok\n");
+        return (ast*) pf;
     }
-    return left;
-}
 
-expr *parse_unary_expr(parser_ctx *ctx) {
-    // TODO: implement unary parsing
-    return parse_postfix_expr(ctx);
-}
-
-expr *parse_postfix_expr(parser_ctx *ctx) {
-    // TODO: implement postfix parsing
-    return parse_primary_expr(ctx);
-}
-
-expr *parse_primary_expr(parser_ctx *ctx) {
-    char *id = NULL;
-    try_parse(&id, ctx, identifier);
-    if (id) {
-        make_ast(raw, rawnode, {.source = id});
-        ast **children = malloc(sizeof(ast*));
-        children[0] = (ast*)rawnode;
-        make_ast(expr, var, {.children = children, .child_count = 1});
-        return var;
+    try_parse(&op, ctx, exact_str,, "&")
+    ||  try_parse(&op, ctx, exact_str,, "*")
+    ||  try_parse(&op, ctx, exact_str,, "+")
+    ||  try_parse(&op, ctx, exact_str,, "-")
+    ||  try_parse(&op, ctx, exact_str,, "~")
+    ||  try_parse(&op, ctx, exact_str,, "!");
+    if (op) {
+        make_ast(unary_op_expr, new_output, {});
+        new_output->op = op;
+        new_output->expr = parse_cast_expr(ctx);
+        if (!new_output->expr)
+            return NULL;
+        new_output->pos = unary_op_expr_prefix;
+        return (ast*)new_output;
     }
-    char *num = NULL;
-    try_parse(&num, ctx, decimal_literal);
-    if (num) {
-        make_ast(raw, rawnode, {.source = num});
-        ast **children = malloc(sizeof(ast*));
-        children[0] = (ast*)rawnode;
-        make_ast(expr, var, {.children = children, .child_count = 1});
-        return var;
+
+    try_parse(&op, ctx, exact_str,, "sizeof")
+    || try_parse(&op, ctx, exact_str,, "_Alignof");
+    if (op) {
+        make_ast(unary_op_expr, new_output, {});
+        new_output->op = op;
+        new_output->pos = unary_op_expr_prefix;
+        make_ast(raw, raw_output, {
+            .source = parse_paren_type(ctx)
+        });
+        if (!raw_output->source)
+            return NULL;
+        new_output->arg = (ast*)raw_output;
+        return (ast*)new_output;
+    }
+
+    return NULL;
+}
+
+
+
+/***********************************************************************
+postfixExpression
+    : (primaryExpression | LP typeName RP '{' initializerList ','? '}') (
+        '[' expression ']'
+        | LP argumentExpressionList? RP
+        | ('.' | '->') identifier
+        | '++'
+        | '--'
+    )*
+    ;
+*/
+
+ast *parse_postfix_expr(parser_ctx *ctx) {
+    ast *expr = try_parse(0, ctx, primary_expr);
+    if (expr)
+    {
+        printf("pf expr ok\n");
+        return expr;
     }
     return NULL;
+    char *op = NULL;
+    while (1) {
+        if (try_parse(&op, ctx, exact_str,, "[") 
+            || try_parse(&op, ctx, exact_str,, "(")) {
+            ast *arg = try_parse(0, ctx, expr);
+            make_ast(unary_op_expr, new_expr, {
+                .op = op,
+                .expr = expr,
+                .pos = unary_op_expr_sufix,
+                .arg = arg
+            });
+            if (!strcmp(op, "["))
+            {
+                if (!try_parse(0, ctx, exact_str,, "]"))
+                    return NULL;
+            }
+            else 
+                if (!try_parse(0, ctx, exact_str,, ")"))
+                    return NULL;
+            expr = (ast*) new_expr;
+        } else if (try_parse(&op, ctx, exact_str,, ".")
+        || try_parse(&op, ctx, exact_str,, "->")) {
+            ast *id = try_parse(0, ctx, identifier);
+            make_ast(unary_op_expr, new_expr, {
+                .op = op,
+                .expr = expr,
+                .pos = unary_op_expr_sufix,
+                .arg = id
+            });      
+        } else if (try_parse(&op, ctx, exact_str,, "++")
+            || try_parse(&op, ctx, exact_str,, "--")) {
+            make_ast(unary_op_expr, new_expr, {
+                .op = op,
+                .expr = expr,
+                .pos = unary_op_expr_sufix,
+            });
+        } else {
+            break ;
+        }
+    }
+    return expr;
+}
+
+
+
+/***********************************************************************
+primaryExpression
+    : identifier
+    | constant
+    | stringLiteral
+    | LP expression RP
+    | messageExpression
+    | selectorExpression
+    | protocolExpression                                REMOVED
+    | encodeExpression
+    | dictionaryLiteralExpression                       REMOVED
+    | arrayLiteralExpression                            REMOVED
+    | boxedExpression                                   REMOVED
+    | blockExpression                                   REMOVED
+    | '__extension__'? LP compoundStatement RP          REMOVED
+    ;
+*/
+
+ast *parse_pexpr(parser_ctx *ctx)
+{
+    ast *node = NULL;
+
+    if (
+        try_parse(0, ctx, exact_str,, "(")
+    &&  try_parse(&node, ctx, expr)
+    &&  try_parse(0, ctx, exact_str,, ")"))
+
+    {
+        return node;
+    }
+    return NULL;
+    
+}
+
+ast *parse_primary_expr(parser_ctx *ctx)
+{
+    ast *output;
+    try_parse(&output, ctx, identifier_raw)
+    || try_parse(&output, ctx, literal)
+    || try_parse(&output, ctx, pexpr)
+    || try_parse(&output, ctx, message)
+    || try_parse(&output, ctx, encode)
+    || try_parse(&output, ctx, selector);
+    printf("parse ok pe\n");
+    return output; 
 }

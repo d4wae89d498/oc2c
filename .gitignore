@@ -8,3 +8,5 @@
 .Identifier
 compile_commands.json
 .cache
+oc2c
+debug.txt

@@ -1,8 +1,8 @@
 CC=clang
-CFLAGS=-Wall -Wextra -Wno-unused-parameter -g
+CFLAGS=-Wall -Wextra -Wno-unused-parameter -g  # -fsanitize=address
 OBJS=main.o parser.o ast.o visitors/dumper.o visitors/transpiler.o
 
-all: lab libobjc test_ast
+all: lab libobjc oc2c
 
 bear:
 	bear -- make re
@@ -13,16 +13,16 @@ lab:
 libobjc:
 	make -C libobjc
 
-test_ast: $(OBJS)
+oc2c: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-main.o: main.c parser.h ast.h
+main.o: main.c parser.h ast.h _strdup.h
 	$(CC) $(CFLAGS) -c $<
 
-parser.o: parser.c parser.h ast.h
+parser.o: parser.c parser.h ast.h _strdup.h
 	$(CC) $(CFLAGS) -c $<
 
-ast.o: ast.c ast.h oop.h
+ast.o: ast.c ast.h
 	$(CC) $(CFLAGS) -c $<
 
 visitors/dumper.o: visitors/dumper.c visitors/dumper.h ast.h
@@ -38,7 +38,7 @@ clean:
 	make -C lab clean 
 	make -C libobjc clean 
 
-	rm -f *.o visitors/*.o test_ast 
+	rm -f *.o visitors/*.o oc2c 
 
 re: clean all
 
