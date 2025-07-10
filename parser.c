@@ -34,7 +34,6 @@ static void restore_ctx_state(parser_ctx *ctx, parser_ctx_state state) {
 //////////////////////////////////////////////////////////
 //////////////  HELPERS                        ///////////
 //////////////////////////////////////////////////////////
-static int skip_comments(parser_ctx *ctx);
 
 static int skip_comments(parser_ctx *ctx) {
     while (1) {
