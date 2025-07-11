@@ -180,10 +180,17 @@ void *unary_op_expr_dump(unary_op_expr *self, void *ctx) {
     printf("unary_op_expr: op=%s pos=%s\n",
            self->op ? self->op : "(null)",
            self->pos == unary_op_expr_prefix ? "prefix" : "suffix");    
+    printf("expr=\n");
     if (self->expr && (self->expr)->accept)
+    {
         (self->expr)->accept(self->expr, dumper_visitor, (void*)(indent + 2));
-    else if (self->arg && (self->arg)->accept)
+    }
+    printf("arg= %p\n", self->arg);
+    if (self->arg && (self->arg)->accept)
+    {
         (self->arg)->accept(self->arg, dumper_visitor, (void*)(indent + 2));
+    }
+    printf("unary_op_expr\n");
     return NULL;
 }
 

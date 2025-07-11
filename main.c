@@ -59,7 +59,7 @@ static void run_visitor(const char *visitor, top_level *root) {
     if (strcmp(visitor, "dumper") == 0) {
        dumper_visitor.top_level(root, 0);
     } else if (strcmp(visitor, "transpiler") == 0) {
-       transpiler.top_level(root, NULL);
+       transpiler_visitor.top_level(root, NULL);
     } else {
         fprintf(stderr, "Unknown visitor: %s\n", visitor);
         exit(1);

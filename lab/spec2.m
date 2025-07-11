@@ -37,7 +37,7 @@
 }
 
 - (void)printIvar {
-    printf("Current ivar value = %d\n", ivar);
+    printf("Current ivar value = %d\n", self->ivar);
 }
 
 - (void)dealloc {
@@ -56,6 +56,8 @@ int main(int argc, const char * argv[]) {
     Name *defaultObj = [[Name alloc] initWithValue:123];
 
     [defaultObj printIvar]; 
+
+
     objc_msgSend(defaultObj, @selector(printIvar:));
 
     [defaultObj dealloc];

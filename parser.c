@@ -11,6 +11,7 @@
 #include "./_strdup.h"
 #include "libobjc/include/objc/objc.h"
 #include "visitors/deleter.h"
+#include "visitors/dumper.h"
 
 
 //////////////////////////////////////////////////////////
@@ -364,6 +365,7 @@ encode *parse_encode(parser_ctx *ctx)
 selector *parse_selector(parser_ctx *ctx)
 {
     try_parse(0, ctx, exact_str,, "@selector");
+    
     try_parse(0, ctx, exact_str,, "(");
     char *output = malloc(1);
     *output = 0;
@@ -382,6 +384,8 @@ selector *parse_selector(parser_ctx *ctx)
                 output = realloc(output, strlen(output) + strlen(kw) + 1);
                 strcat(output, kw);       
             }
+            else 
+                break;
         }
     }
     if (!try_parse(0, ctx, exact_str,, ")"))
@@ -479,7 +483,7 @@ method *parse_method_impl(parser_ctx *ctx)
     compound_statement * block = try_parse(0, ctx, compound_statement);
     if (!block)
     {
-        deleter_visitor.method(block, output);
+        deleter_visitor.method(output, output);
         deleter_visitor.compound_statement(block, ctx);
         return NULL;
     }
@@ -537,6 +541,11 @@ implementation *parse_implementation(parser_ctx *ctx) {
     try_parse_all(ctx, method_impl, methods, 1, -1);
     if (!methods_success) {
         free (name);
+        return NULL;
+    }
+    if (!try_parse(0, ctx, exact_str,, "@end"))
+    {
+        // todo:: free if an issue using deleter_visitor
         return NULL;
     }
     make_ast(implementation, var, {
@@ -1066,7 +1075,7 @@ expr *parse_expr(parser_ctx *ctx) {
         binop = try_parse(0, ctx, assignment_expr);
         if (!binop)
             break;
-        output->exprs = realloc(output->exprs, output->exprs_count + 1);
+        output->exprs = realloc(output->exprs, (output->exprs_count + 1) * sizeof(void*));
         output->exprs[output->exprs_count] = binop;
         output->exprs_count += 1;
     }
@@ -1098,7 +1107,10 @@ ast *parse_unary_expr(parser_ctx *ctx) {
     if (try_parse(&op, ctx, exact_str,, "++")
         || try_parse(&op, ctx, exact_str,, "--"))
     {
-        make_ast(unary_op_expr, new_output, {});
+        make_ast(unary_op_expr, new_output, {
+            .arg = NULL,
+            .expr = NULL
+        });
         new_output->op = op;
         new_output->expr = parse_unary_expr(ctx);
         if (!new_output->expr)
@@ -1121,7 +1133,9 @@ ast *parse_unary_expr(parser_ctx *ctx) {
     ||  try_parse(&op, ctx, exact_str,, "~")
     ||  try_parse(&op, ctx, exact_str,, "!");
     if (op) {
-        make_ast(unary_op_expr, new_output, {});
+        make_ast(unary_op_expr, new_output, {
+            .arg = NULL
+        });
         new_output->op = op;
         new_output->expr = parse_cast_expr(ctx);
         if (!new_output->expr)
@@ -1133,7 +1147,10 @@ ast *parse_unary_expr(parser_ctx *ctx) {
     try_parse(&op, ctx, exact_str,, "sizeof")
     || try_parse(&op, ctx, exact_str,, "_Alignof");
     if (op) {
-        make_ast(unary_op_expr, new_output, {});
+        make_ast(unary_op_expr, new_output, {
+            .expr = NULL,
+            .arg = NULL
+        });
         new_output->op = op;
         new_output->pos = unary_op_expr_prefix;
         make_ast(raw, raw_output, {
@@ -1167,20 +1184,26 @@ ast *parse_postfix_expr(parser_ctx *ctx) {
     if (expr)
     {
         printf("pf expr ok\n");
-        return expr;
+    //    return expr;
     }
-    return NULL;
+  //  return NULL;
     char *op = NULL;
     while (1) {
         if (try_parse(&op, ctx, exact_str,, "[") 
             || try_parse(&op, ctx, exact_str,, "(")) {
             ast *arg = try_parse(0, ctx, expr);
+            printf("-======s------ [%p]::\n", arg);
+            //dumper_visitor.expr(arg, 0);
             make_ast(unary_op_expr, new_expr, {
                 .op = op,
                 .expr = expr,
                 .pos = unary_op_expr_sufix,
                 .arg = arg
             });
+            arg->accept(arg, dumper_visitor, 0);
+            printf("--\n");
+            new_expr->base.accept(new_expr, dumper_visitor, 0);
+            printf("--\n");
             if (!strcmp(op, "["))
             {
                 if (!try_parse(0, ctx, exact_str,, "]"))
@@ -1192,20 +1215,23 @@ ast *parse_postfix_expr(parser_ctx *ctx) {
             expr = (ast*) new_expr;
         } else if (try_parse(&op, ctx, exact_str,, ".")
         || try_parse(&op, ctx, exact_str,, "->")) {
-            ast *id = try_parse(0, ctx, identifier);
+            ast *id = try_parse(0, ctx, identifier_raw);
             make_ast(unary_op_expr, new_expr, {
                 .op = op,
                 .expr = expr,
                 .pos = unary_op_expr_sufix,
                 .arg = id
             });      
+            expr = (ast*) new_expr;
         } else if (try_parse(&op, ctx, exact_str,, "++")
             || try_parse(&op, ctx, exact_str,, "--")) {
             make_ast(unary_op_expr, new_expr, {
                 .op = op,
                 .expr = expr,
                 .pos = unary_op_expr_sufix,
+                .arg = NULL
             });
+            expr = (ast*) new_expr;
         } else {
             break ;
         }

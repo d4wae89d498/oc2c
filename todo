@@ -1,7 +1,8 @@
 - [ ] implement missing/incomplete grammar parts:
     - [ ] compound literals
-    - [ ] parse_postfix_expr
+    - [x] parse_postfix_expr
 
 - [ ] visitors 
-    - [ ] clean/delete
-    - [ ] codegen
+    - [x] clean/delete
+    - [x] emit as is
+    - [ ] c codegen
