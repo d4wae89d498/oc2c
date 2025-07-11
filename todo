@@ -6,3 +6,7 @@
     - [x] clean/delete
     - [x] emit as is
     - [ ] c codegen
+
+- [ ] MYOBJC
+    - [ ] id class_createInstance(Class, size_t);
+    - [ ] void object_dispose(id);

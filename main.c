@@ -6,10 +6,6 @@
 #include "visitors/transpiler.h"
 #include <string.h>
 
-// Forward declarations for AST dump visitor
-struct ast;
-extern struct ast_visitor dumper_visitor;
-
 void print_help(const char *prog) {
     printf("Usage: %s [--visitor dumper|transpiler] <file.m>\n", prog);
     printf("  --visitor dumper      Print AST\n");

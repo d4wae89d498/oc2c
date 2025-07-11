@@ -50,6 +50,10 @@ id objc_alloc(Class cls);
 id objc_init(id obj);
 void objc_dealloc(id obj);
 
+// TODO:
+id class_createInstance(Class, size_t);
+void object_dispose(id);
+
 # ifdef __cplusplus
 }
 # endif
