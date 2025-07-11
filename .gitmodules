@@ -1,0 +1,3 @@
+[submodule "lab/libobjc2"]
+	path = lab/libobjc2
+	url = https://github.com/gnustep/libobjc2.git

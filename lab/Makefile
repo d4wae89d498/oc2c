@@ -1,7 +1,11 @@
 all: test-spec
 
 test-spec:
-	clang `gnustep-config --objc-flags` spec.m -lobjc -lgnustep-base -I /usr/lib/gcc/x86_64-linux-gnu/14/include/ -I/home/mafaussu/GNUstep/Library/Headers -I/usr/local/include/GNUstep -I/usr/include/GNUstep && ./a.out
+	cp ./libobjc2/build/libobjc.so.4.6 .
+	clang  -I./libobjc2/build/objc -I./libobjc2 spec2.m libobjc.so.4.6
+	LD_LIBRARY_PATH=. ./a.out
+	
+#-I /usr/lib/gcc/x86_64-linux-gnu/14/include/ -I/usr/include/GNUstep && ./a.out
 
 clean:
 	rm -f a.out

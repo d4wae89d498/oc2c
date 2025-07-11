@@ -10,3 +10,5 @@ compile_commands.json
 .cache
 oc2c
 debug.txt
+lab/libobjc.so.4.6
+output/
