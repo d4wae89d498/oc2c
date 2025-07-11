@@ -10,7 +10,8 @@
 
 #include "./_strdup.h"
 #include "libobjc/include/objc/objc.h"
-#include "visitors/dumper.h"
+#include "visitors/deleter.h"
+
 
 //////////////////////////////////////////////////////////
 //////////////  CONTEXT                        ///////////
@@ -478,9 +479,8 @@ method *parse_method_impl(parser_ctx *ctx)
     compound_statement * block = try_parse(0, ctx, compound_statement);
     if (!block)
     {
-        free(output);
-        free(block);
-        // TODO: visitor for deletions...
+        deleter_visitor.method(block, output);
+        deleter_visitor.compound_statement(block, ctx);
         return NULL;
     }
     output->body = (ast*) block;
@@ -1013,34 +1013,6 @@ ast *parse_assignment_expr(parser_ctx *ctx)
     }
     return try_parse(0, ctx, conditional_expr);
 }
-/*
-ast *parse_assignment_expr(parser_ctx *ctx)
-{
-    ast *left;
-    char *op;
-    ast *right;
-
-    
-    left = try_parse(0, ctx, conditional_expr);
-    if (left)
-        return left;
-    left = try_parse(0, ctx, unary_expr);
-    if (left) {
-        op = try_parse(0, ctx, assignment_expr_op);
-        if (op) {
-            right = try_parse(0, ctx, assignment_expr);
-            if (right) {
-                make_ast(binop_expr, output, {
-                    .op    = op,
-                    .left  = left,
-                    .right = right
-                });
-                return (ast *)output;
-            }
-        } 
-    }   
-    return NULL;
-}*/
 
 /***********************************************************************
 assignmentOperator
