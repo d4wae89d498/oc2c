@@ -1202,7 +1202,7 @@ ast *parse_postfix_expr(parser_ctx *ctx) {
             });
             arg->accept(arg, dumper_visitor, 0);
             printf("--\n");
-            new_expr->base.accept(new_expr, dumper_visitor, 0);
+            new_expr->base.accept((ast*)new_expr, dumper_visitor, 0);
             printf("--\n");
             if (!strcmp(op, "["))
             {

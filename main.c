@@ -4,6 +4,7 @@
 #include "ast.h"
 #include "visitors/dumper.h"
 #include "visitors/transpiler.h"
+#include "visitors/c_transpiler.h"
 #include <string.h>
 
 void print_help(const char *prog) {
@@ -53,10 +54,15 @@ static char *read_file(const char *filename) {
 
 static void run_visitor(const char *visitor, top_level *root) {
     if (strcmp(visitor, "dumper") == 0) {
-       dumper_visitor.top_level(root, 0);
+        dumper_visitor.top_level(root, 0);
     } else if (strcmp(visitor, "transpiler") == 0) {
-       transpiler_visitor.top_level(root, NULL);
-    } else {
+        transpiler_visitor.top_level(root, NULL);
+    } else if (strcmp(visitor, "c_transpiler") == 0) {
+        printf("running...\n");
+        c_transpiler_ctx ctx = c_transpiler_ctx_init();
+        c_transpiler_visitor.top_level(root, &ctx);
+        c_transpiler_ctx_dump(&ctx);
+     } else {
         fprintf(stderr, "Unknown visitor: %s\n", visitor);
         exit(1);
     }

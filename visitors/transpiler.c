@@ -136,19 +136,16 @@ void *message_param_transpile(message_param *self, void *ctx) {
 }
 
 void *selector_transpile(selector *self, void *ctx) {
-    unsigned long long indent = (unsigned long long)ctx;    
     printf("@selector(%s)", self->str);
     return NULL;
 }
 
 void *encode_transpile(encode *self, void *ctx) {
-    unsigned long long indent = (unsigned long long)ctx;
-    print_indent(indent); printf("@encode(%s)", self->type);
+    printf("@encode(%s)", self->type);
     return NULL;
 }
 
 void *keyword_arg_transpile(keyword_arg *self, void *ctx) {
-    unsigned long long indent = (unsigned long long)ctx;
     printf("%s", self->keyword);
     if (self->name && self->type) {
         printf(":(%s)%s", self->type, self->name);

@@ -6,7 +6,6 @@
 
 
 @interface Name {
-@public
     Class isa;
     int ivar;
 }
@@ -14,7 +13,7 @@
 + (void)helloWith:(int)a;
 + (id)alloc;
 
-- (id)initWithValue:(int)value;
+- (id)initWithValue:(int)value and:(int)B;
 
 - (void)printIvar;
 - (void)dealloc;
