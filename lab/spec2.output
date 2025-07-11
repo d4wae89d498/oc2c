@@ -1,4 +1,4 @@
-==== header ====
+==== impl ====
 #import <objc/runtime.h>
 #import <objc/objc.h>
 #import <objc/message.h>
@@ -40,6 +40,5 @@ Name*defaultObj=[[Name alloc] initWithValue:123 ] ;
 objc_msgSend(defaultObj , @selector(printIvar:) ) ;
 [defaultObj dealloc] ;
 return 0;}
-==== impl ====
 ==== init ====
 ----------
