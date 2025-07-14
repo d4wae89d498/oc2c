@@ -196,11 +196,11 @@ char *parse_identifier(parser_ctx *ctx) {
     return NULL;
 }
 
-raw *parse_identifier_raw(parser_ctx *ctx) {
+identifier *parse_identifier_raw(parser_ctx *ctx) {
     char *s = parse_identifier(ctx);
     if (!s)
         return NULL;
-    make_ast(raw, output, {
+    make_ast(identifier, output, {
         .source = s
     });
     return output;

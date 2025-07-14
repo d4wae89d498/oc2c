@@ -103,6 +103,16 @@ void *raw_transpile(raw *self, void *ctx) {
     return NULL;
 }
 
+void *identifier_transpile(identifier *self, void *ctx) {
+    unsigned long long indent = (unsigned long long)ctx;
+    print_indent(indent); 
+    size_t i = 0;
+    while (isspace(self->source[i]))
+        i += 1;
+    printf("%s", self->source + i);
+    return NULL;
+}
+
 void *top_level_transpile(top_level *self, void *ctx) {
     unsigned long long indent = (unsigned long long)ctx;
     for (size_t i = 0; i < self->size; ++i) {
@@ -215,6 +225,7 @@ ast_visitor transpiler_visitor = {
     .implementation     = implementation_transpile,
     .message            = message_transpile,
     .raw                = raw_transpile,
+    .identifier         = identifier_transpile,
     .top_level          = top_level_transpile,
     .expr               = expr_transpile,
     .message_param      = message_param_transpile,

@@ -2,6 +2,7 @@
 #define C_TRANSPILE_VISITOR_H
 
 #include "../ast.h"
+#include <stddef.h>
 #include <stdio.h>
 
 extern ast_visitor c_transpiler_visitor;
@@ -13,6 +14,9 @@ typedef struct c_transpiler_ctx
 
     FILE    *current;
     char    *current_iface;
+
+    char    *classes[255];
+    size_t  classes_count;
 } c_transpiler_ctx;
 
 c_transpiler_ctx    c_transpiler_ctx_init();
@@ -25,6 +29,7 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx);
 void *implementation_to_c(implementation *self, c_transpiler_ctx *ctx);
 void *message_to_c(message *self, c_transpiler_ctx *ctx);
 void *raw_to_c(raw *self, c_transpiler_ctx *ctx);
+void *identifier_to_c(identifier *self, c_transpiler_ctx *ctx);
 void *top_level_to_c(top_level *self, c_transpiler_ctx *ctx);
 void *expr_to_c(expr *self, c_transpiler_ctx *ctx);
 void *message_param_to_c(message_param *self, c_transpiler_ctx *ctx);

@@ -1,6 +1,6 @@
 CC=clang
 CFLAGS=-Wall -Wextra -Wno-unused-parameter -g  # -fsanitize=address
-OBJS=main.o parser.o ast.o visitors/dumper.o visitors/transpiler.o  visitors/deleter.o visitors/c_transpiler.o
+OBJS=main.o parser.o ast.o visitors/dumper.o visitors/transpiler.o  visitors/deleter.o visitors/c_transpiler.o visitors/identifier.o
 
 all: lab libobjc oc2c
 
@@ -36,6 +36,9 @@ visitors/deleter.o: visitors/deleter.c visitors/deleter.h ast.h
 
 visitors/c_transpiler.o: visitors/c_transpiler.c visitors/c_transpiler.h ast.h
 	$(CC) $(CFLAGS) -c visitors/c_transpiler.c -o visitors/c_transpiler.o
+
+visitors/identifier.o: visitors/identifier.c visitors/identifier.h ast.h
+	$(CC) $(CFLAGS) -c visitors/identifier.c -o visitors/identifier.o
 
 
 clean:

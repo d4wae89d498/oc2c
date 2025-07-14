@@ -18,6 +18,7 @@ typedef struct interface interface;
 typedef struct implementation implementation;
 typedef struct message message;
 typedef struct raw raw;
+typedef struct identifier identifier;
 typedef struct top_level top_level;
 typedef struct expr expr;
 typedef struct binop_expr binop_expr;
@@ -38,6 +39,7 @@ typedef struct ast_visitor
     void *(*implementation)(implementation *self, void*);
     void *(*message)(message *self, void*);
     void *(*raw)(raw *self, void*);
+    void *(*identifier)(identifier *self, void*);
     void *(*top_level)(top_level *self, void*);
     void *(*expr)(expr *self, void*);
     void *(*statement)(statement *self, void*);
@@ -152,6 +154,11 @@ struct raw {
     char *source;
 };
 
+struct identifier {
+    ast base;
+    char *source;
+};
+
 struct selector {
     ast base;
     char *str;
@@ -198,6 +205,7 @@ void *interface_accept(ast *self, ast_visitor visitor, void* arg);
 void *implementation_accept(ast *self, ast_visitor visitor, void* arg);
 void *message_accept(ast *self, ast_visitor visitor, void* arg);
 void *raw_accept(ast *self, ast_visitor visitor, void* arg);
+void *identifier_accept(ast *self, ast_visitor visitor, void* arg);
 void *top_level_accept(ast *self, ast_visitor visitor, void* arg);
 void *expr_accept(ast *self, ast_visitor visitor, void* arg);
 void *binop_expr_accept(ast *self, ast_visitor visitor, void* arg);

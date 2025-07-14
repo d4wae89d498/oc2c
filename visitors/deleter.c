@@ -77,6 +77,12 @@ void *raw_delete(raw *self, void *ctx) {
     return NULL;
 }
 
+void *identifier_delete(identifier *self, void *ctx) {
+    free(self->source);
+    free(self);
+    return NULL;
+}
+
 void *top_level_delete(top_level *self, void *ctx) {
     for (size_t i = 0; i < self->size; ++i) {
         if (self->childs[i] && self->childs[i]->accept)
@@ -170,6 +176,7 @@ ast_visitor deleter_visitor = {
     .implementation     = implementation_delete,
     .message            = message_delete,
     .raw                = raw_delete,
+    .identifier         = identifier_delete,
     .top_level          = top_level_delete,
     .expr               = expr_delete,
     .message_param      = message_param_delete,

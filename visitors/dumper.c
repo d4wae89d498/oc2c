@@ -101,6 +101,13 @@ void *raw_dump(raw *self, void *ctx) {
     return NULL;
 }
 
+void *identifier_dump(identifier *self, void *ctx) {
+    printf("dumping raw...\n");
+    unsigned long long indent = (unsigned long long)ctx;
+    print_indent(indent); printf("raw: '%s'\n", self->source ? self->source : "(null)");
+    return NULL;
+}
+
 void *top_level_dump(top_level *self, void *ctx) {
     unsigned long long indent = (unsigned long long)ctx;
     print_indent(indent); printf("top_level (%zu)\n", self->size);
@@ -210,6 +217,7 @@ ast_visitor dumper_visitor = {
     .implementation     = implementation_dump,
     .message            = message_dump,
     .raw                = raw_dump,
+    .identifier         = identifier_dump,
     .top_level          = top_level_dump,
     .expr               = expr_dump,
     .message_param      = message_param_dump,

@@ -27,6 +27,10 @@ void *raw_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.raw((raw*)self, arg);
 }
 
+void *identifier_accept(ast *self, ast_visitor visitor, void* arg) {
+    return visitor.identifier((identifier*)self, arg);
+}
+
 void *top_level_accept(ast *self, ast_visitor visitor, void* arg) {
     return visitor.top_level((top_level*)self, arg);
 }

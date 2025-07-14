@@ -10,11 +10,8 @@
     int ivar;
 }
 
-+ (void)helloWith:(int)a;
 + (id)alloc;
-
 - (id)initWithValue:(int)value and:(int)B;
-
 - (void)printIvar;
 - (void)dealloc;
 
@@ -22,15 +19,11 @@
 
 @implementation Name
 
-+ (void)helloWith:(int)a {
-    printf("helloWith called with a = %d\n", a);
-}
-
 + (id)alloc {
     return class_createInstance(self, 0);
 }
 
-- (id)initWithValue:(int)value {
+- (id)initWithValue:(int)value and:(int)B {
     self->ivar = value;
     return self;
 }
@@ -41,27 +34,15 @@
 
 - (void)dealloc {
     printf("dealloc called, ivar = %d\n", ivar);
-  //  free(self);
     object_dispose(self);
-  //  [object_getClass(self) dealloc];
 }
 
 @end
 
 int main(int argc, const char * argv[]) {
-
-    [Name helloWith:7];
-
-    SEL test = @selector(alloc);
-    Name *defaultObj = [[Name test] initWithValue:123 and:8+8];
-
+    [Name helloWith:8];
+    id defaultObj = [[Name alloc] initWithValue:123 and:8+8];
     [defaultObj printIvar]; 
-
-
-    //objc_msgSend(defaultObj, @selector(printIvar:));
-
     [defaultObj dealloc];
-
-
     return 0;
 }

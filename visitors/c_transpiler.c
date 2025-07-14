@@ -4,12 +4,14 @@
 #include <stdio.h>
 #include <string.h>
 #include "c_transpiler.h"
+#include "identifier.h"
 
 c_transpiler_ctx c_transpiler_ctx_init()
 {
     c_transpiler_ctx output = (c_transpiler_ctx) {
         .tu = tmpfile(),
-        .init = tmpfile()
+        .init = tmpfile(),
+        .classes_count = 0
     };
     output.current = output.tu;
     return output;
@@ -90,10 +92,29 @@ void *method_to_c(method *self, c_transpiler_ctx *ctx) {
 }
 
 void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
+
+
+    //Class cls = objc_allocateClassPair(NULL, className, sizeof(struct MyRawObject) - sizeof(void *));
+    //objc_registerClassPair(cls);
+
+    // Add method (no type encoding safety)
+    // class_addMethod(cls, sel_registerName("doSomething"), (IMP)myMethod, "");//, "v@:");
+
+    ctx->classes[ctx->classes_count++] = self->name;
+
     ctx->current = ctx->tu;
+    fprintf(ctx->init, "%sClass = objc_allocateClassPair(", self->name);
+    
+    if (self->superclass_name)
+        fprintf(ctx->init, "%sClass", self->superclass_name);
+    else 
+        fprintf(ctx->init, "NULL");
+
+    fprintf(ctx->init, ", \"%s\", sizeof(%s) - sizeof(void *));\n", self->name, self->name);
+    //fprintf(ctx->init, "class_addMethod(cls, sel_registerName(\"doSomething\"), (IMP)myMethod, \"\")"); // todo: ADD TYPE AS LAST ARG
     fprintf(ctx->current, "\n/****    IFACE START    *****/\n");
     //fprintf(ctx->current, "\ntypedef struct __ObjcGenerated_%s %s;", self->name, self->name);
-    fprintf(ctx->current, "\nstruct %s {\n /*todo: reserve bytes for parents?*/\n", self->name);
+    fprintf(ctx->current, "\ntypedef struct %s {\n /*todo: reserve bytes for parents?*/\n", self->name);
     ctx->current_iface = self->name;
     if (self->ivars)
     {
@@ -104,7 +125,7 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
             i += 1;
         }
     }
-    fprintf(ctx->current, "\n}; Class %s;\n", self->name);
+    fprintf(ctx->current, "\n} %s; Class %sClass;\n", self->name, self->name);
     
     for (int i = 0; i < self->method_count; ++i) {
         if (self->methods && self->methods[i] && self->methods[i]->base.accept)
@@ -127,13 +148,35 @@ void *implementation_to_c(implementation *self, c_transpiler_ctx *ctx) {
 
 void *message_to_c(message *self, c_transpiler_ctx *ctx) {
     fprintf(ctx->current, "objc_msgSend(");
-    
+
     self->receiver->base.accept((ast*)self->receiver, c_transpiler_visitor, ctx);
 
-    fprintf(ctx->current, ", ");
+    char *id = self->receiver->base.accept((ast*)self->receiver, identifier_visitor, ctx);
+    if (id && !strcmp(id, "expr"))
+    {
+        if (((expr*)self->receiver)->exprs_count == 1)
+        {
+            id = self->receiver->exprs[0]->accept((ast*)self->receiver->exprs[0], identifier_visitor, ctx);
+           
+            if (id && !strcmp(id, "identifier"))
+            {
+                identifier *candidate_class = (identifier*) self->receiver->exprs[0];
+                size_t i = 0;
+                while (i < ctx->classes_count)
+                {
+                    if (!strcmp(ctx->classes[i], candidate_class->source))
+                    {
+                        fprintf(ctx->current, "Class");
+                        break ;
+                    }
+                    i += 1;
+                }
+            }
+        }
 
+    }
 
-    fprintf(ctx->current, "\"");
+    fprintf(ctx->current, ", \"");
 
 
     for (int i = 0; i < self->params_count; ++i) {
@@ -163,25 +206,30 @@ void *raw_to_c(raw *self, c_transpiler_ctx *ctx) {
     return NULL;
 }
 
+void *identifier_to_c(identifier *self, c_transpiler_ctx *ctx) {
+    size_t i = 0;
+    while (isspace(self->source[i]))
+        i += 1;
+    fprintf(ctx->current, " %s", self->source + i);
+    return NULL;
+}
+
 void *top_level_to_c(top_level *self, c_transpiler_ctx *ctx) {
+    fprintf(ctx->init, "\nvoid __init() {\n");
     for (size_t i = 0; i < self->size; ++i) {
         self->childs[i]->accept(self->childs[i], c_transpiler_visitor, ctx);
     }
-    ctx->current = ctx->tu;
-    fprintf(ctx->current, "\nvoid __init() {\n");
-
-    fprintf(ctx->current, "\n}\n");
-
+    fprintf(ctx->init, "}\n");
     return NULL;
 }
 
 void *expr_to_c(expr *self, c_transpiler_ctx *ctx) {
-    fprintf(ctx->current, " ");
+    //fprintf(ctx->current, " ");
     for (int i = 0; i < self->exprs_count; ++i) {
+        //fprintf(ctx->current, " ");
         if (self->exprs && self->exprs[i] && (self->exprs[i])->accept) {
             (self->exprs[i])->accept(self->exprs[i], c_transpiler_visitor, ctx);
         }
-        fprintf(ctx->current, " ");
         if (i + 1 != self->exprs_count)
             fprintf(ctx->current, ", ");
     }
@@ -272,6 +320,7 @@ ast_visitor c_transpiler_visitor = {
     .implementation     = (void*) implementation_to_c,
     .message            = (void*) message_to_c,
     .raw                = (void*) raw_to_c,
+    .identifier         = (void*) identifier_to_c,
     .top_level          = (void*) top_level_to_c,
     .expr               = (void*) expr_to_c,
     .message_param      = (void*) message_param_to_c,

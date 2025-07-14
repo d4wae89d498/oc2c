@@ -16,7 +16,7 @@ typedef struct parser_ctx_state parser_ctx_state;
 
 // LEXERS:
 char *parse_identifier(parser_ctx *ctx);
-raw *parse_identifier_raw(parser_ctx *ctx);
+identifier *parse_identifier_raw(parser_ctx *ctx);
 
 char *parse_hex_literal(parser_ctx *ctx);
 char *parse_octal_literal(parser_ctx *ctx);
