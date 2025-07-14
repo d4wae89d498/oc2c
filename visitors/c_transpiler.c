@@ -92,7 +92,8 @@ void *method_to_c(method *self, c_transpiler_ctx *ctx) {
 void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
     ctx->current = ctx->tu;
     fprintf(ctx->current, "\n/****    IFACE START    *****/\n");
-    fprintf(ctx->current, "\nstruct __ObjcGenerated_%s {\n /*todo: reserve bytes for parents?*/\n", self->name);
+    //fprintf(ctx->current, "\ntypedef struct __ObjcGenerated_%s %s;", self->name, self->name);
+    fprintf(ctx->current, "\nstruct %s {\n /*todo: reserve bytes for parents?*/\n", self->name);
     ctx->current_iface = self->name;
     if (self->ivars)
     {
@@ -103,7 +104,7 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
             i += 1;
         }
     }
-    fprintf(ctx->current, "\n};\n");
+    fprintf(ctx->current, "\n}; Class %s;\n", self->name);
     
     for (int i = 0; i < self->method_count; ++i) {
         if (self->methods && self->methods[i] && self->methods[i]->base.accept)
@@ -132,9 +133,23 @@ void *message_to_c(message *self, c_transpiler_ctx *ctx) {
     fprintf(ctx->current, ", ");
 
 
+    fprintf(ctx->current, "\"");
+
+
     for (int i = 0; i < self->params_count; ++i) {
-        if (self->params && self->params[i] && self->params[i]->base.accept)
-            self->params[i]->base.accept((ast*)self->params[i], c_transpiler_visitor, ctx);
+        fprintf(ctx->current, "%s", self->params[i]->keyword);
+        if (i || (i == 0 && self->params[i]->value))
+            fprintf(ctx->current, ":");
+    }
+    fprintf(ctx->current, "\"");
+    if (self->params_count && self->params[0]->value)
+    {
+        fprintf(ctx->current, ", ");
+        for (int i = 0; i < self->params_count; ++i) {
+            self->params[i]->value->base.accept((ast*)self->params[i]->value, c_transpiler_visitor, ctx);
+            if (i+1 != self->params_count)
+                fprintf(ctx->current, ", ");
+        }
     }
     fprintf(ctx->current, ")");
     return NULL;

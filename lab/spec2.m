@@ -31,7 +31,7 @@
 }
 
 - (id)initWithValue:(int)value {
-    ivar = value;
+    self->ivar = value;
     return self;
 }
 
@@ -52,12 +52,13 @@ int main(int argc, const char * argv[]) {
 
     [Name helloWith:7];
 
-    Name *defaultObj = [[Name alloc] initWithValue:123];
+    SEL test = @selector(alloc);
+    Name *defaultObj = [[Name test] initWithValue:123 and:8+8];
 
     [defaultObj printIvar]; 
 
 
-    objc_msgSend(defaultObj, @selector(printIvar:));
+    //objc_msgSend(defaultObj, @selector(printIvar:));
 
     [defaultObj dealloc];
 

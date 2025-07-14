@@ -6,45 +6,45 @@
 #include <stdlib.h>
 /****    IFACE START    *****/
 
-struct __ObjcGenerated_Name {
+struct Name {
  /*todo: reserve bytes for parents?*/
 Class isa ;
 int ivar ;
 
-};
-void __ObjcGenerated_helloWith(SEL _cmd, int a);
-id __ObjcGenerated_alloc(SEL _cmd);
-id __ObjcGenerated_initWithValueand(struct Name * self, SEL _cmd, int value, int B);
-void __ObjcGenerated_printIvar(struct Name * self, SEL _cmd);
-void __ObjcGenerated_dealloc(struct Name * self, SEL _cmd);
+}; Class Name;
+void __ObjcGenerated_helloWith(struct Name * self, SEL _cmd, int a);
+id __ObjcGenerated_alloc(struct Name * self, SEL _cmd);
+id __ObjcGenerated_initWithValueand(SEL _cmd, int value, int B);
+void __ObjcGenerated_printIvar(SEL _cmd);
+void __ObjcGenerated_dealloc(SEL _cmd);
 
 /****    IFACE END    *****/
 
 /****    IMPL START    *****/
-void __ObjcGenerated_helloWith(SEL _cmd, int a){
+void __ObjcGenerated_helloWith(struct Name * self, SEL _cmd, int a){
  printf( "helloWith called with a = %d\n" , a ) ;
 }
-id __ObjcGenerated_alloc(SEL _cmd){
+id __ObjcGenerated_alloc(struct Name * self, SEL _cmd){
 return class_createInstance(self, 0);}
-id __ObjcGenerated_initWithValue(struct Name * self, SEL _cmd, int value){
- ivar=value ;
+id __ObjcGenerated_initWithValue(SEL _cmd, int value){
+ self->ivar=value ;
 return self ;
 }
-void __ObjcGenerated_printIvar(struct Name * self, SEL _cmd){
+void __ObjcGenerated_printIvar(SEL _cmd){
  printf( "Current ivar value = %d\n" , self->ivar ) ;
 }
-void __ObjcGenerated_dealloc(struct Name * self, SEL _cmd){
+void __ObjcGenerated_dealloc(SEL _cmd){
  printf( "dealloc called, ivar = %d\n" , ivar ) ;
  object_dispose( self ) ;
 }
 
 /****    IMPL END    *****/
 int main(int argc, const char * argv[]){
- objc_msgSend( Name , helloWith: 7 ) ;
-Name *defaultObj=objc_msgSend( objc_msgSend( Name , alloc) , initWithValue: 123 ) ;
- objc_msgSend( defaultObj , printIvar) ;
- objc_msgSend( defaultObj , sel_getUid("printIvar:") ) ;
- objc_msgSend( defaultObj , dealloc) ;
+ objc_msgSend( Name , "helloWith:",  7 ) ;
+SEL test=sel_getUid("alloc") ;
+Name *defaultObj=objc_msgSend( objc_msgSend( Name , "test") , "initWithValue:and:",  123 ,  8+8 ) ;
+ objc_msgSend( defaultObj , "printIvar") ;
+ objc_msgSend( defaultObj , "dealloc") ;
 return 0;}
 
 void __init() {
