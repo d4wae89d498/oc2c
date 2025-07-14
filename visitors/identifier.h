@@ -1,5 +1,5 @@
-#ifndef DELETER_VISITOR_H
-# define DELETER_VISITOR_H
+#ifndef IDENTIFIER_VISITOR_H
+# define IDENTIFIER_VISITOR_H
 
 # include "../ast.h"
 
@@ -23,4 +23,4 @@ void *conditional_expr_delete(conditional_expr *self, void *ctx);
 void *unary_op_expr_delete(unary_op_expr *self, void *ctx);
 void *cast_expr_delete(cast_expr *self, void *ctx);
 
-#endif // deleter_VISITOR_H
+#endif // IDENTIFIER_VISITOR_H
