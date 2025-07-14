@@ -33,7 +33,6 @@
 }
 
 - (void)dealloc {
-    printf("dealloc called, ivar = %d\n", ivar);
     object_dispose(self);
 }
 

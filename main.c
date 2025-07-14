@@ -6,6 +6,7 @@
 #include "visitors/transpiler.h"
 #include "visitors/c_transpiler.h"
 #include <string.h>
+#include "_fd_copy.h"
 
 void print_help(const char *prog) {
     printf("Usage: %s [--visitor dumper|transpiler] <file.m>\n", prog);
@@ -58,10 +59,17 @@ static void run_visitor(const char *visitor, top_level *root) {
     } else if (strcmp(visitor, "transpiler") == 0) {
         transpiler_visitor.top_level(root, NULL);
     } else if (strcmp(visitor, "c_transpiler") == 0) {
+
         printf("running...\n");
         c_transpiler_ctx ctx = c_transpiler_ctx_init();
         c_transpiler_visitor.top_level(root, &ctx);
         c_transpiler_ctx_dump(&ctx);
+
+
+        _fd_copy(ctx.iface, "lab/a.iface.h");
+        _fd_copy(ctx.impl, "lab/a.impl.c");
+        _fd_copy(ctx.init, "lab/a.init.c");
+
      } else {
         fprintf(stderr, "Unknown visitor: %s\n", visitor);
         exit(1);

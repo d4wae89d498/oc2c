@@ -9,11 +9,12 @@
 c_transpiler_ctx c_transpiler_ctx_init()
 {
     c_transpiler_ctx output = (c_transpiler_ctx) {
-        .tu = tmpfile(),
+        .iface = tmpfile(),
+        .impl = tmpfile(),
         .init = tmpfile(),
         .classes_count = 0
     };
-    output.current = output.tu;
+    output.current = output.impl;
     return output;
 }
 
@@ -31,7 +32,8 @@ static void _dump_one(FILE *stream, char *label)
 }
 
 void c_transpiler_ctx_dump(c_transpiler_ctx *ctx) {
-    _dump_one(ctx->tu, "impl");
+    _dump_one(ctx->iface, "iface");
+    _dump_one(ctx->impl, "impl");
     _dump_one(ctx->init, "init");
     printf("----------\n");
 
@@ -72,6 +74,9 @@ void *method_to_c(method *self, c_transpiler_ctx *ctx) {
 
     if (self->method_type == member_method)
         fprintf(ctx->current, "struct %s * self, ", ctx->current_iface);
+    else
+        fprintf(ctx->current, "Class self, ");
+  
     fprintf(ctx->current, "SEL _cmd");
     if (self->keyword_arg_count >= 1 && self->keyword_args[0]->type && strlen(self->keyword_args[0]->type))
         fprintf(ctx->current, ", ");
@@ -93,7 +98,7 @@ void *method_to_c(method *self, c_transpiler_ctx *ctx) {
 
 void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
 
-
+    ctx->current = ctx->iface;
     //Class cls = objc_allocateClassPair(NULL, className, sizeof(struct MyRawObject) - sizeof(void *));
     //objc_registerClassPair(cls);
 
@@ -102,7 +107,6 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
 
     ctx->classes[ctx->classes_count++] = self->name;
 
-    ctx->current = ctx->tu;
     fprintf(ctx->init, "%sClass = objc_allocateClassPair(", self->name);
     
     if (self->superclass_name)
@@ -136,7 +140,7 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
 }
 
 void *implementation_to_c(implementation *self, c_transpiler_ctx *ctx) {
-    ctx->current = ctx->tu;
+    ctx->current = ctx->impl;
     fprintf(ctx->current, "\n/****    IMPL START    *****/\n");
     for (int i = 0; i < self->method_count; ++i) {
         if (self->methods && self->methods[i] && self->methods[i]->base.accept)
@@ -152,6 +156,7 @@ void *message_to_c(message *self, c_transpiler_ctx *ctx) {
     self->receiver->base.accept((ast*)self->receiver, c_transpiler_visitor, ctx);
 
     char *id = self->receiver->base.accept((ast*)self->receiver, identifier_visitor, ctx);
+
     if (id && !strcmp(id, "expr"))
     {
         if (((expr*)self->receiver)->exprs_count == 1)
@@ -217,6 +222,7 @@ void *identifier_to_c(identifier *self, c_transpiler_ctx *ctx) {
 void *top_level_to_c(top_level *self, c_transpiler_ctx *ctx) {
     fprintf(ctx->init, "\nvoid __init() {\n");
     for (size_t i = 0; i < self->size; ++i) {
+        ctx->current = ctx->impl;
         self->childs[i]->accept(self->childs[i], c_transpiler_visitor, ctx);
     }
     fprintf(ctx->init, "}\n");

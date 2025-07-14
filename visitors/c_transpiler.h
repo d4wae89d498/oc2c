@@ -9,7 +9,8 @@ extern ast_visitor c_transpiler_visitor;
 
 typedef struct c_transpiler_ctx 
 {
-    FILE    *tu;
+    FILE    *iface;
+    FILE    *impl;
     FILE    *init;
 
     FILE    *current;

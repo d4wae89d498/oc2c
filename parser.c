@@ -426,9 +426,9 @@ method *parse_method_common(parser_ctx *ctx) {
     char *return_type = NULL;
 
     if (try_parse(0, ctx, exact_str,, "+")) 
-        method_type = member_method;
-    else if (try_parse(0, ctx, exact_str,, "-"))
         method_type = static_method;
+    else if (try_parse(0, ctx, exact_str,, "-"))
+        method_type = member_method;
     else 
         return NULL;
     return_type = try_parse(0, ctx, paren_type);

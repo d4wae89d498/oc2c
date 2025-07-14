@@ -1,3 +1,5 @@
+#ifndef _STRDUP_H
+# define _STRDUP_H
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,3 +17,4 @@ static char *_strndup(const char *s, size_t len) {
 static char *_strdup(const char *s) {
     return _strndup(s, strlen(s));
 }
+#endif // _STRDUP_H

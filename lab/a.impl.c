@@ -1,19 +1,3 @@
-
-
-/****    IFACE START    *****/
-
-typedef struct Name {
- /*todo: reserve bytes for parents?*/
-Class isa;
-int ivar;
-
-} Name; Class NameClass;
-id __ObjcGenerated_alloc(Class self, SEL _cmd);
-id __ObjcGenerated_initWithValueand(struct Name * self, SEL _cmd, int value, int B);
-void __ObjcGenerated_printIvar(struct Name * self, SEL _cmd);
-void __ObjcGenerated_dealloc(struct Name * self, SEL _cmd);
-
-/****    IFACE END    *****/
 #import <objc/runtime.h>
 #import <objc/objc.h>
 #import <objc/message.h>
@@ -40,8 +24,3 @@ id defaultObj=objc_msgSend(objc_msgSend( NameClass, "alloc"), "initWithValue:and
 objc_msgSend( defaultObj, "printIvar");
 objc_msgSend( defaultObj, "dealloc");
 return 0;}
-
-void __init() {
-NameClass = objc_allocateClassPair(NULL, "Name", sizeof(Name) - sizeof(void *));
-}
-

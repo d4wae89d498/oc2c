@@ -6,8 +6,10 @@
     - [x] clean/delete
     - [x] emit as is
     - [ ] c codegen
-        - [ ] finish message passing selector 
-        - [ ] store class tree and write it in init fd
+        - [x] finish message passing selector 
+        - [x] store class tree and write it in init fd
+        - [ ] emit a.iface.h a.impl.c a.init.c
+        - [ ] emit #line
 
 - [ ] MYOBJC
     - [ ] id class_createInstance(Class, size_t);
