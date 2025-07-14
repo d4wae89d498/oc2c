@@ -1,5 +1,5 @@
-#ifndef OBJC_H
-# define OBJC_H
+#ifndef OBJC_MESSAGE_H
+# define OBJC_MESSAGE_H
 # include <string.h>
 # include "./runtime.h"
 # ifdef __cplusplus
@@ -40,4 +40,4 @@ Method *class_getInstanceMethodCheck(Class isa, SEL sel, ...);
 # ifdef __cplusplus
 }
 # endif
-#endif // OBJC_H 
+#endif // OBJC_MESSAGE_H
