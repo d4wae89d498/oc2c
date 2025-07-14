@@ -1,5 +1,5 @@
-#ifndef C_TRANSPILE_VISITOR_H
-#define C_TRANSPILE_VISITOR_H
+#ifndef C_TRANSPILER_VISITOR_H
+#define C_TRANSPILER_VISITOR_H
 
 #include "../ast.h"
 #include <stddef.h>
@@ -42,4 +42,4 @@ void *unary_op_expr_to_c(unary_op_expr *self, c_transpiler_ctx *ctx);
 void *cast_expr_to_c(cast_expr *self, c_transpiler_ctx *ctx);
 
 
-#endif // C_TRANSPILE_VISITOR_H
+#endif // C_TRANSPILER_VISITOR_H
