@@ -64,8 +64,7 @@ void *statement_to_c(statement *self, c_transpiler_ctx *ctx) {
 }
 
 void *method_to_c(method *self, c_transpiler_ctx *ctx) {
-
-    fprintf(ctx->current, "%s __ObjcGenerated_", self->return_type);
+    fprintf(ctx->current, "%s __ObjcGenerated_%s_", self->return_type, ctx->current_iface);
     for (size_t i = 0; i < self->keyword_arg_count; ++i) {
         
         fprintf(ctx->current, "%s",self->keyword_args[i]->keyword);
@@ -93,6 +92,28 @@ void *method_to_c(method *self, c_transpiler_ctx *ctx) {
         fprintf(ctx->current, ";\n");
     else 
         self->body->accept(self->body, c_transpiler_visitor, ctx);
+
+
+    {/******************************** */
+        if (!self->body)
+        {
+            fprintf(ctx->init, "class_addMethod(%sClass, sel_registerName(\"", ctx->current_iface);
+            for (size_t i = 0; i < self->keyword_arg_count; ++i)
+            {
+                fprintf(ctx->init, "%s",self->keyword_args[i]->keyword);
+                if(self->keyword_args[i]->type)
+                    fprintf(ctx->init, ":");
+            }
+            fprintf(ctx->init, "\"), (IMP)__ObjcGenerated_%s_", ctx->current_iface);
+            for (size_t i = 0; i < self->keyword_arg_count; ++i)
+                fprintf(ctx->init, "%s",self->keyword_args[i]->keyword);
+            fprintf(ctx->init, ", \"\");\n");
+
+            // __ObjcGenerated_%s_
+        }
+
+    }
+
     return NULL;
 }
 
@@ -107,14 +128,18 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
 
     ctx->classes[ctx->classes_count++] = self->name;
 
-    fprintf(ctx->init, "%sClass = objc_allocateClassPair(", self->name);
-    
-    if (self->superclass_name)
-        fprintf(ctx->init, "%sClass", self->superclass_name);
-    else 
-        fprintf(ctx->init, "NULL");
+    {
+        /*******************************************************************************/
+        fprintf(ctx->init, "%sClass = objc_allocateClassPair(", self->name);
+        
+        if (self->superclass_name)
+            fprintf(ctx->init, "%sClass", self->superclass_name);
+        else 
+            fprintf(ctx->init, "NULL");
 
-    fprintf(ctx->init, ", \"%s\", sizeof(%s) - sizeof(void *));\n", self->name, self->name);
+        fprintf(ctx->init, ", \"%s\", sizeof(%s) - sizeof(void *));\n", self->name, self->name);
+        fprintf(ctx->init, "objc_registerClassPair(%sClass);\n", self->name);
+    }
     //fprintf(ctx->init, "class_addMethod(cls, sel_registerName(\"doSomething\"), (IMP)myMethod, \"\")"); // todo: ADD TYPE AS LAST ARG
     fprintf(ctx->current, "\n/****    IFACE START    *****/\n");
     //fprintf(ctx->current, "\ntypedef struct __ObjcGenerated_%s %s;", self->name, self->name);
@@ -129,8 +154,9 @@ void *interface_to_c(interface *self, c_transpiler_ctx *ctx) {
             i += 1;
         }
     }
-    fprintf(ctx->current, "\n} %s; Class %sClass;\n", self->name, self->name);
-    
+    fprintf(ctx->current, "\n} %s; extern Class %sClass;\n", self->name, self->name);
+    fprintf(ctx->impl, "\nClass %sClass;\n",  self->name);
+
     for (int i = 0; i < self->method_count; ++i) {
         if (self->methods && self->methods[i] && self->methods[i]->base.accept)
             self->methods[i]->base.accept((ast*)self->methods[i], c_transpiler_visitor, ctx);
@@ -181,7 +207,7 @@ void *message_to_c(message *self, c_transpiler_ctx *ctx) {
 
     }
 
-    fprintf(ctx->current, ", \"");
+    fprintf(ctx->current, ", sel_getUid(\"");
 
 
     for (int i = 0; i < self->params_count; ++i) {
@@ -189,7 +215,7 @@ void *message_to_c(message *self, c_transpiler_ctx *ctx) {
         if (i || (i == 0 && self->params[i]->value))
             fprintf(ctx->current, ":");
     }
-    fprintf(ctx->current, "\"");
+    fprintf(ctx->current, "\")");
     if (self->params_count && self->params[0]->value)
     {
         fprintf(ctx->current, ", ");

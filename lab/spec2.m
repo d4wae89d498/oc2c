@@ -20,6 +20,7 @@
 @implementation Name
 
 + (id)alloc {
+    printf("ALLOC!\n");
     return class_createInstance(self, 0);
 }
 
@@ -39,7 +40,7 @@
 @end
 
 int main(int argc, const char * argv[]) {
-    [Name helloWith:8];
+    //[Name helloWith:8];
     id defaultObj = [[Name alloc] initWithValue:123 and:8+8];
     [defaultObj printIvar]; 
     [defaultObj dealloc];

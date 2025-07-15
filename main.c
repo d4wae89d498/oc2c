@@ -61,9 +61,21 @@ static void run_visitor(const char *visitor, top_level *root) {
     } else if (strcmp(visitor, "c_transpiler") == 0) {
 
         printf("running...\n");
+        char *target_name = "a";
+
         c_transpiler_ctx ctx = c_transpiler_ctx_init();
+        fprintf(ctx.iface, "#ifndef ___%s_h\n", target_name);
+        fprintf(ctx.iface, "# define ___%s_h\n", target_name);
+        fprintf(ctx.iface, "# include <objc/runtime.h>\n");
+        fprintf(ctx.iface, "# include <objc/message.h>\n");
+
+        fprintf(ctx.impl, "#include \"%s.iface.h\"\n", target_name);
+        fprintf(ctx.init, "#include \"%s.iface.h\"\n", target_name);
+
         c_transpiler_visitor.top_level(root, &ctx);
         c_transpiler_ctx_dump(&ctx);
+
+        fprintf(ctx.iface, "#endif\n");
 
 
         _fd_copy(ctx.iface, "lab/a.iface.h");

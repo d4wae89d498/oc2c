@@ -8,7 +8,8 @@
     - [ ] c codegen
         - [x] finish message passing selector 
         - [x] store class tree and write it in init fd
-        - [ ] emit a.iface.h a.impl.c a.init.c
+        - [x] emit a.iface.h a.impl.c a.init.c
+        - [ ] test ivars with super class
         - [ ] emit #line
 
 - [ ] MYOBJC

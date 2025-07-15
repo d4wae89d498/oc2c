@@ -7,7 +7,7 @@ test-spec:
 
 test-gen:
 	cp ./libobjc2/build/libobjc.so.4.6 .
-	clang  -I./libobjc2/build/objc -I./libobjc2 spec2.output.m libobjc.so.4.6
+	clang a.impl.c a.init.c -Wl,-init,__init -I./libobjc2/build/objc -I./libobjc2 libobjc.so.4.6
 	LD_LIBRARY_PATH=. ./a.out
 
 test-specc:
