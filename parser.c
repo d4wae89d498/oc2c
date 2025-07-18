@@ -1191,27 +1191,19 @@ ast *parse_postfix_expr(parser_ctx *ctx) {
     while (1) {
         if (try_parse(&op, ctx, exact_str,, "[") 
             || try_parse(&op, ctx, exact_str,, "(")) {
+                make_ast(unary_op_expr, new_expr, {
+                    .op = op,
+                    .expr = expr,
+                    .pos = unary_op_expr_sufix,
+                    .arg = NULL
+                });
             ast *arg = try_parse(0, ctx, expr);
-            printf("-======s------ [%p]::\n", arg);
-            //dumper_visitor.expr(arg, 0);
-            make_ast(unary_op_expr, new_expr, {
-                .op = op,
-                .expr = expr,
-                .pos = unary_op_expr_sufix,
-                .arg = arg
-            });
-            arg->accept(arg, dumper_visitor, 0);
-            printf("--\n");
-            new_expr->base.accept((ast*)new_expr, dumper_visitor, 0);
-            printf("--\n");
-            if (!strcmp(op, "["))
-            {
-                if (!try_parse(0, ctx, exact_str,, "]"))
+
+            if (!strcmp(op, "[") && !try_parse(0, ctx, exact_str,, "]"))
                     return NULL;
-            }
-            else 
-                if (!try_parse(0, ctx, exact_str,, ")"))
+            else if (!try_parse(0, ctx, exact_str,, ")"))
                     return NULL;
+            new_expr->arg = arg;
             expr = (ast*) new_expr;
         } else if (try_parse(&op, ctx, exact_str,, ".")
         || try_parse(&op, ctx, exact_str,, "->")) {

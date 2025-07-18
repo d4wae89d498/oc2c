@@ -4,7 +4,7 @@
 #include "ast.h"
 #include "visitors/dumper.h"
 #include "visitors/transpiler.h"
-#include "visitors/c_transpiler.h"
+#include "visitors/c_transpiler2.h"
 #include <string.h>
 #include "_fd_copy.h"
 
@@ -63,17 +63,18 @@ static void run_visitor(const char *visitor, top_level *root) {
         printf("running...\n");
         char *target_name = "a";
 
-        c_transpiler_ctx ctx = c_transpiler_ctx_init();
+        c_transpiler2_ctx ctx = c_transpiler2_ctx_init();
         fprintf(ctx.iface, "#ifndef ___%s_h\n", target_name);
         fprintf(ctx.iface, "# define ___%s_h\n", target_name);
-        fprintf(ctx.iface, "# include <objc/runtime.h>\n");
-        fprintf(ctx.iface, "# include <objc/message.h>\n");
+        fprintf(ctx.iface, "# include <stdlib.h>\n");
+        // fprintf(ctx.iface, "# include <objc/runtime.h>\n");
+       // fprintf(ctx.iface, "# include <objc/message.h>\n");
 
         fprintf(ctx.impl, "#include \"%s.iface.h\"\n", target_name);
         fprintf(ctx.init, "#include \"%s.iface.h\"\n", target_name);
 
-        c_transpiler_visitor.top_level(root, &ctx);
-        c_transpiler_ctx_dump(&ctx);
+        c_transpiler2_visitor.top_level(root, &ctx);
+        c_transpiler2_ctx_dump(&ctx);
 
         fprintf(ctx.iface, "#endif\n");
 

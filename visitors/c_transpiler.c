@@ -177,7 +177,7 @@ void *implementation_to_c(implementation *self, c_transpiler_ctx *ctx) {
 }
 
 void *message_to_c(message *self, c_transpiler_ctx *ctx) {
-    fprintf(ctx->current, "objc_msgSend(");
+    fprintf(ctx->current, "objc_msgSend((id)");
 
     self->receiver->base.accept((ast*)self->receiver, c_transpiler_visitor, ctx);
 
@@ -204,7 +204,6 @@ void *message_to_c(message *self, c_transpiler_ctx *ctx) {
                 }
             }
         }
-
     }
 
     fprintf(ctx->current, ", sel_getUid(\"");
